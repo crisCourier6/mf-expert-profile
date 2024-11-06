@@ -7,7 +7,7 @@ import Profile from "./components/Profile";
 function App() {
   return (
     <div className="App">
-      <Router>
+      <Router basename="/mf-expert-profile">
           <Routes>
               <Route path="/profile" element={<Profile />}/>
           </Routes>
