@@ -9,7 +9,7 @@ import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
 import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';

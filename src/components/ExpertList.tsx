@@ -1,15 +1,11 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Box, Card, CardContent, Grid, IconButton, Typography, Button, InputAdornment, TextField, 
-    SnackbarCloseReason, CardActions } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-import { CircularProgress } from "@mui/material";
+import { Box, Card, CardContent, Grid, IconButton, Typography, Button, InputAdornment, TextField, CardActions } from '@mui/material';
 import { Expert } from '../interfaces/Expert';
 import { Comment } from '../interfaces/Comment';
 import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
-import ClearIcon from '@mui/icons-material/Clear'; // Import the clear icon
+import ClearIcon from '@mui/icons-material/Clear'; 
 import GradeRoundedIcon from '@mui/icons-material/GradeRounded';
 import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
@@ -17,7 +13,6 @@ import CommentRoundedIcon from '@mui/icons-material/CommentRounded';
 import ExpertProfile from './ExpertProfile';
 
 const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ isAppBarVisible, onReady }) => {
-    const navigate = useNavigate()
     const expertsURL = "/expert-profile"
     const commentsURL = "/comments-expert"
     const [experts, setExperts] = useState<Expert[]>([])
@@ -25,8 +20,6 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     const currentUserId = window.localStorage.id;
     const [expertsFiltered, setExpertsFiltered] = useState<Expert[]>([])
     const [searchQuery, setSearchQuery] = useState("");
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-    const [successOpen, setSuccessOpen] = useState(false)
     const [allDone, setAllDone] = useState(false)
     const [expertStats, setExpertStats] = useState<{ 
         [expertId: string]: { 
@@ -170,16 +163,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
     };
-    const handleSuccessClose = (
-        event: React.SyntheticEvent | Event,
-        reason?: SnackbarCloseReason,
-      ) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-    
-        setSuccessOpen(false);
-      }
+
     const handleOpenExpert = (expert: Expert) => {
         setSelectedExpert(expert);
         const expertComments = comments.filter(comment => comment.expertId === expert.userId);

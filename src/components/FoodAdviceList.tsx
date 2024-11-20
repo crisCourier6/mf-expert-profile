@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Typography, IconButton, Box, DialogActions, Button, Paper, 
     TextField, FormControlLabel, FormLabel, RadioGroup, Radio, Alert, SnackbarCloseReason, Snackbar } from '@mui/material';
 import api from '../api';
 import { FoodAdvice } from '../interfaces/FoodAdvice';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import RuleIcon from '@mui/icons-material/Rule';
@@ -13,7 +13,6 @@ const FoodAdviceList: React.FC = () => {
     const [openList, setOpenList] = useState(false)
     const {id} = useParams()
     const [foodAdvices, setFoodAdvices] = useState<FoodAdvice[]>([]);
-    const currentUserId = window.localStorage.id
     const currentExpertId = window.localStorage.e_id
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showEditDialog, setShowEditDialog] = useState(false)

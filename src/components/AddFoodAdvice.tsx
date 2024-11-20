@@ -1,26 +1,14 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import api from '../api';
-import { Typography, RadioGroup, FormControlLabel, Radio, Alert, Button, Dialog, DialogActions, DialogContent, InputAdornment, TextField, Snackbar, SnackbarCloseReason, DialogTitle, FormLabel, FormControl, FormHelperText } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Typography, RadioGroup, FormControlLabel, Radio, Alert, Button, Dialog, DialogActions, DialogContent, 
+    TextField, Snackbar, SnackbarCloseReason, DialogTitle, FormLabel } from '@mui/material';
+import { useParams } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-import { FoodAdvice } from '../interfaces/FoodAdvice';
-
-type FoodAdviceValues = {
-    type: string,
-    content: string,
-    expertId: string,
-    foodLocalId: string
-}
-
 
 
 const AddFoodAdvice: React.FC= () => {
     const {id} = useParams()
-    const navigate = useNavigate()
     const foodAdviceURL = "/food-advice"
-    const [foodAdvices, setFoodAdvices] = useState<FoodAdvice[]>([])
-    const currentUserId = window.localStorage.id;
     const currentExpertId = window.localStorage.e_id
     const [showCreateForm, setShowCreateForm] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)

@@ -1,6 +1,5 @@
-import React, { useRef} from 'react';
+import React from 'react';
 import { Dialog, DialogTitle, DialogContent, Typography, Box, DialogActions, Button, Divider} from '@mui/material';
-
 import { Article } from '../interfaces/Article';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import dayjs from 'dayjs';
@@ -12,9 +11,6 @@ interface ArticleDetailsProps {
 }
 
 const ArticleDetails: React.FC<ArticleDetailsProps> = ({ article, onClose, open }) => {
-    const currentUserId = window.localStorage.id
-    const commentsRef = useRef<HTMLDivElement>(null);
-
     const handleOpenLink = () => {
         if (article.link){
             const url = article.link.startsWith('http://') || article.link.startsWith('https://')

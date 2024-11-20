@@ -1,11 +1,8 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from '../api';
 import { Box, Card, CardContent, Grid, IconButton, Typography, Alert, Button, Dialog, 
     DialogActions, DialogContent, TextField, Snackbar, SnackbarCloseReason, CardActions, 
-    DialogTitle, Tooltip } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-import { CircularProgress } from "@mui/material";
+    DialogTitle, Tooltip, CircularProgress } from '@mui/material';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
@@ -20,10 +17,8 @@ type ArticleValues = {
 }
 
 const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean }> = ({ isAppBarVisible, canCreateArticle }) => {
-    const navigate = useNavigate()
     const articlesURL = "/articles"
     const [articles, setArticles] = useState<Article[]>([])
-    const currentUserId = window.localStorage.id;
     const currentExpertId = window.localStorage.getItem("e_id")
     const [showEditForm, setShowEditForm] = useState(false)
     const [showCreateForm, setShowCreateForm] = useState(false)
@@ -185,13 +180,6 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
             handleCloseArticleForm()
         })
     }
-
-    const updateArticleInList = (updatedArticle:Article) => {
-        setArticles((prevArticles) =>
-            prevArticles.map((article) => (article.id === updatedArticle.id ? updatedArticle : article))
-        );
-        setSelectedArticle(updatedArticle); // Update the selected article
-    };
 
     return ( allDone?
         <Grid container display="flex" 

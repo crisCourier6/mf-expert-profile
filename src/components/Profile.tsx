@@ -1,13 +1,12 @@
 import React from "react";
-import { Button, Box, Alert, Paper, Grid, Backdrop, Dialog, DialogContent, DialogActions, TextField, Snackbar, SnackbarCloseReason, InputAdornment, IconButton, Typography, FormControlLabel, Checkbox, DialogTitle} from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Box, Alert, Paper, Grid, Dialog, DialogContent, DialogActions, TextField, Snackbar, 
+    SnackbarCloseReason, Typography, FormControlLabel, Checkbox, DialogTitle} from '@mui/material';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 // import { DevTool } from '@hookform/devtools';
 import { Expert } from "../interfaces/Expert";
 import { useForm } from "react-hook-form";
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 type FormValues = {
     address: string,
@@ -20,7 +19,6 @@ type FormValues = {
 }
 
 const Profile: React.FC = () => {
-    const navigate = useNavigate()
     const { id } = useParams()
     const { register, handleSubmit, formState, reset } = useForm<FormValues>({
         mode: "onBlur",
