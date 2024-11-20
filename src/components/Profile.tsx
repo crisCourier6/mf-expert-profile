@@ -2,11 +2,11 @@ import React from "react";
 import { Button, Box, Alert, Paper, Grid, Dialog, DialogContent, DialogActions, TextField, Snackbar, 
     SnackbarCloseReason, Typography, FormControlLabel, Checkbox, DialogTitle} from '@mui/material';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 // import { DevTool } from '@hookform/devtools';
 import { Expert } from "../interfaces/Expert";
 import { useForm } from "react-hook-form";
+import api from "../api";
 
 type FormValues = {
     address: string,
@@ -39,10 +39,10 @@ const Profile: React.FC = () => {
     const [dialogOpen, setDialogOpen] = useState(false); // For dialog visibility
     const [isExpert, setIsExpert] = useState(false)
 
-    const expertsURL = "http://192.168.100.6:8080/experts/"
+    const expertsURL = "/experts"
     useEffect(()=>{
         
-        axios.get(`${expertsURL}byUserId/${id}`, {
+        api.get(`${expertsURL}/byUserId/${id}`, {
             withCredentials: true,
             headers: {
                 Authorization: "Bearer " + window.localStorage.token
@@ -77,7 +77,7 @@ const Profile: React.FC = () => {
     };
 
     const onSubmit = (data: FormValues) => {
-        axios.patch(`${expertsURL}byId/${user.id}`, data, {
+        api.patch(`${expertsURL}/byId/${user.id}`, data, {
             withCredentials: true,
             headers: {
                 Authorization: "Bearer " + window.localStorage.token
