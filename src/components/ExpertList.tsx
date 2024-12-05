@@ -17,7 +17,8 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     const commentsURL = "/comments-expert"
     const [experts, setExperts] = useState<Expert[]>([])
     const [comments, setComments] = useState<Comment[]>([])
-    const currentUserId = window.localStorage.id;
+    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
+    const currentUserId = window.sessionStorage.getItem("id") || window.localStorage.getItem("id")
     const [expertsFiltered, setExpertsFiltered] = useState<Expert[]>([])
     const [searchQuery, setSearchQuery] = useState("");
     const [allDone, setAllDone] = useState(false)
@@ -41,14 +42,14 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
         const fetchExperts = api.get(expertsURL, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         });
     
         const fetchComments = api.get(`${commentsURL}${commentsQueryParams}`, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         });
     

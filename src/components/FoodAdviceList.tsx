@@ -13,7 +13,8 @@ const FoodAdviceList: React.FC = () => {
     const [openList, setOpenList] = useState(false)
     const {id} = useParams()
     const [foodAdvices, setFoodAdvices] = useState<FoodAdvice[]>([]);
-    const currentExpertId = window.localStorage.e_id
+    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
+    const currentExpertId = window.sessionStorage.getItem("e_id") || window.localStorage.getItem("e_id")
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showEditDialog, setShowEditDialog] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -31,7 +32,7 @@ const FoodAdviceList: React.FC = () => {
             api.get(`${foodAdviceURL}${queryParams}`,{
                 withCredentials: true,
                 headers: {
-                    Authorization: "Bearer " + window.localStorage.token
+                    Authorization: "Bearer " + token
                 }
             })
             .then(res=>{
@@ -54,7 +55,7 @@ const FoodAdviceList: React.FC = () => {
 
             api.patch(`${foodAdviceURL}/${selectedFoodAdvice.id}`, updatedFoodAdvice, {
                 withCredentials: true,
-                headers: { Authorization: "Bearer " + window.localStorage.token },
+                headers: { Authorization: "Bearer " + token },
             })
                 .then(res => {
                     setSnackbarMsg(`Recomendación modificada con éxito`)
@@ -75,7 +76,7 @@ const FoodAdviceList: React.FC = () => {
         if (selectedFoodAdvice) {
             api.delete(`${foodAdviceURL}/${selectedFoodAdvice.id}`, {
                 withCredentials: true,
-                headers: { Authorization: "Bearer " + window.localStorage.token },
+                headers: { Authorization: "Bearer " + token },
             })
             .then(res => {
                 setSnackbarMsg(`Recomendación eliminada con éxito`)

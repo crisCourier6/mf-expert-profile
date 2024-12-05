@@ -8,8 +8,9 @@ import AddIcon from '@mui/icons-material/Add';
 
 const AddFoodAdvice: React.FC= () => {
     const {id} = useParams()
+    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
     const foodAdviceURL = "/food-advice"
-    const currentExpertId = window.localStorage.e_id
+    const currentExpertId = window.sessionStorage.getItem("e_id") || window.localStorage.getItem("e_id")
     const [showCreateForm, setShowCreateForm] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [snackbarMsg, setSnackbarMsg] = useState("")
@@ -55,7 +56,7 @@ const AddFoodAdvice: React.FC= () => {
         api.post(`${foodAdviceURL}`, newFoodAdvice, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         })
         .then((res) => {

@@ -18,8 +18,9 @@ type ArticleValues = {
 
 const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean }> = ({ isAppBarVisible, canCreateArticle }) => {
     const articlesURL = "/articles"
+    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
     const [articles, setArticles] = useState<Article[]>([])
-    const currentExpertId = window.localStorage.getItem("e_id")
+    const currentExpertId = window.sessionStorage.getItem("e_id") || window.localStorage.getItem("e_id")
     const [showEditForm, setShowEditForm] = useState(false)
     const [showCreateForm, setShowCreateForm] = useState(false)
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -46,7 +47,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
         api.get(`${articlesURL}${queryParams}`, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         })
         .then(res => {
@@ -115,7 +116,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
         api.post(`${articlesURL}`, {...data, expertId: currentExpertId}, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         })
         .then((res) => {
@@ -137,7 +138,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
         api.patch(`${articlesURL}/${selectedArticle?.id}`, data, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         })
         .then((res) => {
@@ -162,7 +163,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
         api.delete(`${articlesURL}/${selectedArticle?.id}`, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         })
         .then(res => {

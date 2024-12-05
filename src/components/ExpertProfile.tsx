@@ -28,7 +28,8 @@ interface ExpertProfileProps {
 const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, onClose, onUpdateComment, onDeleteComment, onNewComment, scrollToComments }) => {
     const [professions, setProfessions] = useState("")
     const [localComments, setLocalComments] = useState<Comment[]>([]);
-    const currentUserId = window.localStorage.id
+    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
+    const currentUserId = window.sessionStorage.getItem("id") || window.localStorage.getItem("id")
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showEditDialog, setShowEditDialog] = useState(false)
     const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
@@ -83,7 +84,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
 
             api.patch(`${commentsURL}/${selectedComment.id}`, updatedComment, {
                 withCredentials: true,
-                headers: { Authorization: "Bearer " + window.localStorage.token },
+                headers: { Authorization: "Bearer " + token },
             })
                 .then(res => {
                     onUpdateComment(updatedComment)
@@ -99,7 +100,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
         if (selectedComment) {
             api.delete(`${commentsURL}/${selectedComment.id}`, {
                 withCredentials: true,
-                headers: { Authorization: "Bearer " + window.localStorage.token },
+                headers: { Authorization: "Bearer " + token },
             })
                 .then(res => {
                     onDeleteComment(selectedComment.id)
@@ -126,7 +127,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
         api.post(commentsURL, newComment, {
             withCredentials: true,
             headers: {
-                Authorization: "Bearer " + window.localStorage.token
+                Authorization: "Bearer " + token
             }
         }).then(res => {
             console.log(res);
