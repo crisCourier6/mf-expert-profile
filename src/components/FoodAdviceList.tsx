@@ -27,7 +27,7 @@ const FoodAdviceList: React.FC = () => {
 
     useEffect(() => {
         const queryParams = `?we=true&f=${id}`
-        console.log(`${foodAdviceURL}${queryParams}`)
+        //console.log(`${foodAdviceURL}${queryParams}`)
         if(openList){
             api.get(`${foodAdviceURL}${queryParams}`,{
                 withCredentials: true,
@@ -36,7 +36,7 @@ const FoodAdviceList: React.FC = () => {
                 }
             })
             .then(res=>{
-                console.log(res.data)
+                //console.log(res.data)
                 setFoodAdvices(res.data)
             })
             .catch(error => {

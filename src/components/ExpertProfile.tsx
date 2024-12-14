@@ -58,11 +58,11 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
 
     useEffect(() => {
         setLocalComments(comments);
-        console.log(comments)
+        //console.log(comments)
     }, [comments]);
 
     useEffect(() => {
-        console.log(open, scrollToComments, commentsRef)
+        //console.log(open, scrollToComments, commentsRef)
         if (open && scrollToComments) {
             setExpandedComments(true)
             // Scroll to the comments section when the ExpertProfile opens
@@ -130,7 +130,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                 Authorization: "Bearer " + token
             }
         }).then(res => {
-            console.log(res);
+            //console.log(res);
             onNewComment(res.data);  // Call the parent's new comment function
             setNewCommentContent("");  // Clear the input fields after creating
             setIsRecommended(false);

@@ -49,7 +49,7 @@ const Profile: React.FC = () => {
             }
         })
         .then((res)=>{
-            console.log(res.data)
+            //console.log(res.data)
             setUser(res.data)
             reset(res.data)
             setIsExpert(true)
@@ -84,7 +84,7 @@ const Profile: React.FC = () => {
             }
         })
         .then((res) => {
-            console.log(res.data)
+            //console.log(res.data)
             setSuccessOpen(true);
             setUser(res.data); // Update the displayed user info
             setDialogOpen(false); // Close the dialog after successful submission

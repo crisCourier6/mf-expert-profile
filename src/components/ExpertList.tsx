@@ -55,8 +55,8 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     
         Promise.all([fetchExperts, fetchComments])
             .then(([expertsResponse, commentsResponse]) => {
-                console.log("Experts:", expertsResponse.data);
-                console.log("Comments:", commentsResponse.data);
+                //console.log("Experts:", expertsResponse.data);
+                //console.log("Comments:", commentsResponse.data);
 
                 const expertsData = expertsResponse.data;
                 const commentsData = commentsResponse.data;
@@ -183,7 +183,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                 comment.id === updatedComment.id ? updatedComment : comment
             )
         );
-        console.log("actualice comments")
+        //console.log("actualice comments")
     };
 
     // Function to delete a comment
@@ -191,7 +191,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
         setComments((prevComments) =>
             prevComments.filter((comment) => comment.id !== commentId)
         );
-        console.log("actualice comments")
+        //console.log("actualice comments")
     };
 
     const newComment = (newComment: Comment) => {

@@ -112,7 +112,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     }
 
     const onCreateArticle = (data: ArticleValues) => {
-        console.log(data)
+        // console.log(data)
         api.post(`${articlesURL}`, {...data, expertId: currentExpertId}, {
             withCredentials: true,
             headers: {
@@ -134,7 +134,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     };
 
     const onEditArticle = (data: ArticleValues) => {
-        console.log(data)
+        // console.log(data)
         api.patch(`${articlesURL}/${selectedArticle?.id}`, data, {
             withCredentials: true,
             headers: {
@@ -167,7 +167,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
             }
         })
         .then(res => {
-            console.log(res)
+            // console.log(res)
             setSnackbarOpen(true)
             setSnackbarMsg(`Artículo eliminado con éxito`)
             setArticles(articles.filter((article: Article) => article.id !== selectedArticle?.id))
