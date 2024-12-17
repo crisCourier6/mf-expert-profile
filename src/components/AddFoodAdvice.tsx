@@ -140,7 +140,7 @@ const AddFoodAdvice: React.FC= () => {
                 onClose={handleSnackbarClose}
                 message={snackbarMsg}
             >
-                <Alert onClose={handleSnackbarClose} severity={snackbarMsg.includes("Error")?"error":"success"} sx={{ width: '100%' }}>
+                <Alert variant="filled" onClose={handleSnackbarClose} severity={snackbarMsg.includes("Error")?"error":"success"} sx={{ width: '100%' }}>
                     {snackbarMsg}
                 </Alert>
             </Snackbar>

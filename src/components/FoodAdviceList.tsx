@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Typography, IconButton, Box, DialogActions, Button, Paper, 
-    TextField, FormControlLabel, FormLabel, RadioGroup, Radio, Alert, SnackbarCloseReason, Snackbar } from '@mui/material';
+    TextField, FormControlLabel, FormLabel, RadioGroup, Radio, Alert, SnackbarCloseReason, Snackbar, 
+    CircularProgress} from '@mui/material';
 import api from '../api';
 import { FoodAdvice } from '../interfaces/FoodAdvice';
 import dayjs from 'dayjs';
@@ -22,6 +23,7 @@ const FoodAdviceList: React.FC = () => {
     const [selectedFoodAdvice, setSelectedFoodAdvice] = useState<FoodAdvice | null>(null);
     const [editedContent, setEditedContent] = useState("");
     const [editedType, setEditedType] = useState("");
+    const [loadingAdvice, setLoadingAdvice] = useState(false)
     const foodAdviceURL = "/food-advice"
     
 
@@ -29,6 +31,7 @@ const FoodAdviceList: React.FC = () => {
         const queryParams = `?we=true&f=${id}`
         //console.log(`${foodAdviceURL}${queryParams}`)
         if(openList){
+            setLoadingAdvice(true)
             api.get(`${foodAdviceURL}${queryParams}`,{
                 withCredentials: true,
                 headers: {
@@ -41,6 +44,9 @@ const FoodAdviceList: React.FC = () => {
             })
             .catch(error => {
                 console.log(error.response)
+            })
+            .finally(()=>{
+                setLoadingAdvice(false)
             })
         }
     }, [openList]);
@@ -161,95 +167,102 @@ const FoodAdviceList: React.FC = () => {
                         flexDirection: "column",
                         gap:1,
                     }}>
-                        {foodAdvices.map(foodAdvice => {
-                            return (
-                                <Box key={foodAdvice.id} sx={{ 
-                                    display: 'flex', 
-                                    width: "100%",
-                                    flexDirection: "column",
-                                    border: "2px solid",
-                                    borderColor: "primary.dark",
-                                    gap: 0.5,
-                                }}> 
-                                    <Paper sx={{
-                                        width:"100%", 
-                                        bgcolor: foodAdvice.type==="warning"
-                                            ?"warning.main"
-                                            :foodAdvice.type==="positive"
-                                                ?"secondary.main"
-                                                :"error.main",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "space-between",
-                                        borderRadius:0
-                                    }}>
-                                        <Typography 
-                                        variant="subtitle1" 
-                                        color={foodAdvice.type==="warning"
-                                            ?"warning.contrastText"
-                                            :foodAdvice.type==="positive"
-                                                ?"secondary.contrastText"
-                                                :"error.contrastText"}
-                                        sx={{flexGrow: 1, textAlign: "left", width: "80%", pl:1, fontSize:18}}
-                                        >
-                                            {foodAdvice.expertProfile?.user?.name} 
-                                        </Typography>
-                                    </Paper>
-                                    <Box sx={{display: "flex", flexDirection: "column", width: "100%"}}>
-                                        <Typography variant="subtitle1" textAlign={"justify"} sx={{px:1}}>
-                                            {foodAdvice.content}
-                                        </Typography>
-                                        <Typography variant="subtitle2" textAlign={"right"} sx={{px:1, fontStyle: "italic"}}>
-                                            {dayjs(foodAdvice.createdAt).format("DD/MM/YYYY")}
-                                        </Typography>
-                                    </Box>
-                                    <Paper sx={{
-                                        width:"100%", 
-                                        bgcolor: foodAdvice.type==="warning"
-                                                    ?"warning.main"
-                                                    :foodAdvice.type==="positive"
-                                                        ?"secondary.main"
-                                                        :"error.main", 
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "start",
-                                        borderRadius:0
-                                    }}>
-                                        <Box sx={{ display: "flex", flexDirection: "row-reverse", width:"100%", gap: 0.5 }}> {/* Wrap icons in a box for layout */}
-                                            {foodAdvice.expertId === currentExpertId && 
-                                                <>
-                                                    <IconButton size="small" onClick={() => openEditDialog(foodAdvice)}>
-                                                        <EditRoundedIcon sx={{ 
-                                                            color: foodAdvice.type==="warning"
-                                                                        ?"warning.contrastText"
-                                                                        :foodAdvice.type==="positive"
-                                                                            ?"secondary.contrastText"
-                                                                            :"error.contrastText",
-                                                            fontSize: 18
-                                                        }}/>
-                                                    </IconButton>
-                                                </>
-                                            }                   
-                                            {foodAdvice.expertId === currentExpertId && 
-                                                <>
-                                                    <IconButton size="small" onClick={() => openDeleteDialog(foodAdvice)}>
-                                                        <DeleteForeverRoundedIcon sx={{ 
-                                                            color: foodAdvice.type==="warning"
-                                                                        ?"warning.contrastText"
-                                                                        :foodAdvice.type==="positive"
-                                                                            ?"secondary.contrastText"
-                                                                            :"error.contrastText", 
-                                                            fontSize:18
-                                                        }} />
-                                                    </IconButton>
-                                                </>
-                                            }   
-                                        </Box>
-                                    </Paper>
 
-                                </Box>
-                            )
-                        })}
+                        {loadingAdvice 
+                            ? <CircularProgress/> 
+                            : foodAdvices.length===0
+                                ?   <Typography variant='subtitle1' textAlign={"center"}>
+                                        Aún no hay consejos de consumo para este alimento
+                                    </Typography>
+                                :   foodAdvices.map(foodAdvice => {
+                                    return (
+                                    <Box key={foodAdvice.id} sx={{ 
+                                        display: 'flex', 
+                                        width: "100%",
+                                        flexDirection: "column",
+                                        border: "2px solid",
+                                        borderColor: "primary.dark",
+                                        gap: 0.5,
+                                    }}> 
+                                        <Paper sx={{
+                                            width:"100%", 
+                                            bgcolor: foodAdvice.type==="warning"
+                                                ?"warning.main"
+                                                :foodAdvice.type==="positive"
+                                                    ?"secondary.main"
+                                                    :"error.main",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "space-between",
+                                            borderRadius:0
+                                        }}>
+                                            <Typography 
+                                            variant="subtitle1" 
+                                            color={foodAdvice.type==="warning"
+                                                ?"warning.contrastText"
+                                                :foodAdvice.type==="positive"
+                                                    ?"secondary.contrastText"
+                                                    :"error.contrastText"}
+                                            sx={{flexGrow: 1, textAlign: "left", width: "80%", pl:1, fontSize:18}}
+                                            >
+                                                {foodAdvice.expertProfile?.user?.name} 
+                                            </Typography>
+                                        </Paper>
+                                        <Box sx={{display: "flex", flexDirection: "column", width: "100%"}}>
+                                            <Typography variant="subtitle1" textAlign={"justify"} sx={{px:1}}>
+                                                {foodAdvice.content}
+                                            </Typography>
+                                            <Typography variant="subtitle2" textAlign={"right"} sx={{px:1, fontStyle: "italic"}}>
+                                                {dayjs(foodAdvice.createdAt).format("DD/MM/YYYY")}
+                                            </Typography>
+                                        </Box>
+                                        <Paper sx={{
+                                            width:"100%", 
+                                            bgcolor: foodAdvice.type==="warning"
+                                                        ?"warning.main"
+                                                        :foodAdvice.type==="positive"
+                                                            ?"secondary.main"
+                                                            :"error.main", 
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "start",
+                                            borderRadius:0
+                                        }}>
+                                            <Box sx={{ display: "flex", flexDirection: "row-reverse", width:"100%", gap: 0.5 }}> {/* Wrap icons in a box for layout */}
+                                                {foodAdvice.expertId === currentExpertId && 
+                                                    <>
+                                                        <IconButton size="small" onClick={() => openEditDialog(foodAdvice)}>
+                                                            <EditRoundedIcon sx={{ 
+                                                                color: foodAdvice.type==="warning"
+                                                                            ?"warning.contrastText"
+                                                                            :foodAdvice.type==="positive"
+                                                                                ?"secondary.contrastText"
+                                                                                :"error.contrastText",
+                                                                fontSize: 18
+                                                            }}/>
+                                                        </IconButton>
+                                                    </>
+                                                }                   
+                                                {foodAdvice.expertId === currentExpertId && 
+                                                    <>
+                                                        <IconButton size="small" onClick={() => openDeleteDialog(foodAdvice)}>
+                                                            <DeleteForeverRoundedIcon sx={{ 
+                                                                color: foodAdvice.type==="warning"
+                                                                            ?"warning.contrastText"
+                                                                            :foodAdvice.type==="positive"
+                                                                                ?"secondary.contrastText"
+                                                                                :"error.contrastText", 
+                                                                fontSize:18
+                                                            }} />
+                                                        </IconButton>
+                                                    </>
+                                                }   
+                                            </Box>
+                                        </Paper>
+
+                                    </Box>
+                                )
+                            })}
                     </Box>
                 </DialogContent>
                 <DialogActions>
@@ -316,7 +329,7 @@ const FoodAdviceList: React.FC = () => {
                     onClose={handleSnackbarClose}
                     message={snackbarMsg}
                 >
-                    <Alert onClose={handleSnackbarClose} severity={snackbarMsg.includes("Error")?"error":"success"} sx={{ width: '100%' }}>
+                    <Alert variant="filled" onClose={handleSnackbarClose} severity={snackbarMsg.includes("Error")?"error":"success"} sx={{ width: '100%' }}>
                         {snackbarMsg}
                     </Alert>
                 </Snackbar>

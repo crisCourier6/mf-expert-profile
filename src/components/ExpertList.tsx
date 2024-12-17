@@ -270,24 +270,30 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                     userHasRecommended: false,
                 };
                 return (
-                <Card key={expert.id} sx={{
-                border: "4px solid", 
-                borderColor: "primary.dark", 
-                bgcolor: "primary.contrastText",
-                width:"90%", 
-                height: "15vh",
-                maxHeight: "200px", 
-                minHeight: "60px",
-                display:"flex",
-                }}>
-                    <CardContent sx={{
-                    width:"80%",
-                    height: "100%", 
-                    display:"flex", 
-                    flexDirection: "row", 
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding:0,
+                    <Card key={expert.id} sx={{
+                        border: "4px solid", 
+                        borderColor: "primary.dark", 
+                        bgcolor: "primary.dark",
+                        width:"90%", 
+                        height: "20vh",
+                        maxHeight: "120px", 
+                        minHeight: "60px",
+                        display:"flex",
+                        flexDirection: "column"
+                    }}>
+                    <CardContent onClick={() => {
+                                handleOpenExpert(expert)
+                                setScrollToComments(false)
+                                }} 
+                    sx={{
+                        width:"100%",
+                        height: "75%", 
+                        display:"flex", 
+                        flexDirection: "row", 
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding:0,
+                        cursor: "pointer"
                     }}>
                         <Box sx={{
                             width:"100%", 
@@ -295,6 +301,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                             display:"flex", 
                             flexDirection: "column",
                             justifyContent: "flex-start",
+                            bgcolor: "primary.contrastText"
                         }}>
                             <Typography 
                                 variant="h6" 
@@ -329,7 +336,8 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                                 alignItems: "center", 
                                 justifyContent: "start", 
                                 display: "flex", 
-                                gap:1
+                                gap:1,
+                                bgcolor: "primary.contrastText"
                             }}>
                             <InsertLinkRoundedIcon sx={{fontSize:18}}/>
                             {expert.webPage?
@@ -358,12 +366,12 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                                 
                         </Box>
                     </CardContent>
-                    <CardActions sx={{padding:0, width:"20%"}}>
+                    <CardActions sx={{padding:0, width:"100%", height: "25%"}}>
                     <Box sx={{
                         width:"100%", 
                         display:"flex", 
                         height: "100%",
-                        flexDirection: "column",
+                        flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
                         bgcolor: "primary.dark",

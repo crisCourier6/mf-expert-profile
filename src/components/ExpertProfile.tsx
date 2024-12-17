@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Typography, IconButton, Box, Avatar, 
-    DialogActions, Button, Divider, Paper, TextField, FormControlLabel, Switch } from '@mui/material';
+    DialogActions, Button, Divider, Paper, TextField, FormControlLabel, Switch, 
+    RadioGroup,
+    Radio} from '@mui/material';
 import api from '../api';
 import { Expert } from '../interfaces/Expert';
 import { Comment } from '../interfaces/Comment';
@@ -37,7 +39,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
     const [editedIsRecommended, setEditedIsRecommended] = useState(false);
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [newCommentContent, setNewCommentContent] = useState("");
-    const [isRecommended, setIsRecommended] = useState(false);
+    const [isRecommended, setIsRecommended] = useState<null|boolean>(null);
     const [expandedComments, setExpandedComments] = useState(false);
     const commentsRef = useRef<HTMLDivElement>(null);
     const commentsURL = "/comments-expert"
@@ -88,6 +90,8 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
             })
                 .then(res => {
                     onUpdateComment(updatedComment)
+                    setNewCommentContent("");  // Clear the input fields after creating
+                    setIsRecommended(null);
                 })
                 .catch(error => {
                     console.log(error);
@@ -133,7 +137,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
             //console.log(res);
             onNewComment(res.data);  // Call the parent's new comment function
             setNewCommentContent("");  // Clear the input fields after creating
-            setIsRecommended(false);
+            setIsRecommended(null);
             closeCreateDialog();
         }).catch(error => {
             console.log(error);
@@ -396,15 +400,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
             >
                 <DialogTitle>Editar Comentario</DialogTitle>
                 <DialogContent>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={editedIsRecommended}
-                                onChange={(e) => setEditedIsRecommended(e.target.checked)}
-                            />
-                        }
-                        label={editedIsRecommended? "Recomendado": "No recomendado"}
-                    />
+                    
                     <TextField
                         fullWidth
                         label="Comentario"
@@ -414,12 +410,33 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                         onChange={(e) => setEditedContent(e.target.value)}
                         sx={{mt:2}}
                     />
-                    
+                    <RadioGroup
+                        value={
+                            editedIsRecommended
+                                ? "recommended"
+                                : "notRecommended"
+                        }
+                        onChange={(event) =>
+                            setEditedIsRecommended(event.target.value === "recommended")
+                        }
+                        row
+                    >
+                        <FormControlLabel
+                            value="recommended"
+                            control={<Radio />}
+                            label="Recomendado"
+                        />
+                        <FormControlLabel
+                            value="notRecommended"
+                            control={<Radio />}
+                            label="No recomendado"
+                        />
+                    </RadioGroup>
+                    <Box sx={{display:"flex", justifyContent: "flex-end", pt:2}}>
+                        <Button onClick={() => setShowEditDialog(false)}>Cancelar</Button>
+                        <Button onClick={handleUpdateComment} variant="contained" disabled={editedContent==""}>Guardar</Button>
+                    </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowEditDialog(false)}>Cancelar</Button>
-                    <Button onClick={handleUpdateComment} variant="contained" disabled={editedContent==""}>Guardar</Button>
-                </DialogActions>
             </Dialog>
 
             {/* Delete Comment Confirmation Dialog */}
@@ -441,17 +458,8 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                     maxWidth: "450px"
                 }
             }} >
-                <DialogTitle>Nuevo comentario</DialogTitle>
+                <DialogTitle>Nuevo comentario - {expert.user?.name}</DialogTitle>
                 <DialogContent>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={isRecommended}
-                                onChange={() => setIsRecommended(!isRecommended)}
-                            />
-                        }
-                        label={isRecommended? "Recomendado": "No recomendado"}
-                    />
                     <TextField
                         label="Comentario"
                         fullWidth
@@ -461,14 +469,37 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                         onChange={(e) => setNewCommentContent(e.target.value)}
                         sx={{mt:2}}
                     />
-                    
+                    <RadioGroup
+                        value={
+                            isRecommended === null
+                                ? "" // No option is selected initially
+                                : isRecommended
+                                ? "recommended"
+                                : "notRecommended"
+                        }
+                        onChange={(event) =>
+                            setIsRecommended(event.target.value === "recommended")
+                        }
+                        row
+                    >
+                        <FormControlLabel
+                            value="recommended"
+                            control={<Radio />}
+                            label="Recomendado"
+                        />
+                        <FormControlLabel
+                            value="notRecommended"
+                            control={<Radio />}
+                            label="No recomendado"
+                        />
+                    </RadioGroup>
+                    <Box sx={{display:"flex", justifyContent: "flex-end", pt:2}}>
+                        <Button onClick={closeCreateDialog}>Cancelar</Button>
+                        <Button onClick={handleCreateComment} variant="contained" color="primary" disabled={newCommentContent===" " || isRecommended===null}>
+                            Guardar
+                        </Button>
+                    </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={closeCreateDialog}>Cancelar</Button>
-                    <Button onClick={handleCreateComment} variant="contained" color="primary">
-                        Guardar
-                    </Button>
-                </DialogActions>
             </Dialog>
         </Dialog>
         
