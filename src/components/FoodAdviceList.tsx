@@ -286,6 +286,8 @@ const FoodAdviceList: React.FC = () => {
                     <DialogTitle>Editar Comentario</DialogTitle>
                     <DialogContent>
                         <TextField
+                            inputProps={{maxLength: 250}}
+                            helperText={`${editedContent}.length}/250`}
                             fullWidth
                             label="Recomendación"
                             multiline

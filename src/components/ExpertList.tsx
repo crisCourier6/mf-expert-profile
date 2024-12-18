@@ -242,6 +242,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                     onChange={handleSearchChange}
                     placeholder="Buscar por nombre"
                     variant="standard"
+                    inputProps={{maxLength: 100}}
                     fullWidth
                     sx={{mt: 0.5, maxWidth: "60%"}}
                     InputProps={{

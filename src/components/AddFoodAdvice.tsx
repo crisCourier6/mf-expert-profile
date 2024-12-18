@@ -111,6 +111,8 @@ const AddFoodAdvice: React.FC= () => {
                     overflowY: 'auto'
                 }}>
                         <TextField
+                            inputProps={{maxLength: 250}}
+                            helperText={`${adviceContent.length}/250`}
                             fullWidth
                             onChange={(e) => handleContentChange(e.target.value)}
                             label="Recomendación"

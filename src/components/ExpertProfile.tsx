@@ -404,6 +404,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                     <TextField
                         fullWidth
                         label="Comentario"
+                        inputProps={{maxLength: 500}}
                         multiline
                         rows={4}
                         value={editedContent}
@@ -462,6 +463,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                 <DialogContent>
                     <TextField
                         label="Comentario"
+                        inputProps={{maxLength: 500}}
                         fullWidth
                         multiline
                         rows={4}

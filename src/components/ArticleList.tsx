@@ -368,6 +368,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                     <form onSubmit={handleSubmitArticle(onEditArticle)}>
                         <TextField
                             fullWidth
+                            inputProps={{maxLength: 100}}
                             label="Título"
                             {...registerArticle("title", {required: "Ingresar título"})}
                             error={!!articleErrors.title}
@@ -377,6 +378,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                         <TextField
                             fullWidth
                             label="Descripción"
+                            inputProps={{maxLength: 250}}
                             multiline
                             rows={4}
                             {...registerArticle("description")}
@@ -388,6 +390,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                             fullWidth
                             label="Enlace"
                             {...registerArticle("link")}
+                            inputProps={{maxLength: 250}}
                             error={!!articleErrors.link}
                             helperText={articleErrors.link?.message}
                             margin="normal"
@@ -418,6 +421,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                     <form onSubmit={handleSubmitArticle(onCreateArticle)}>
                         <TextField
                             fullWidth
+                            inputProps={{maxLength: 100}}
                             label="Título"
                             {...registerArticle("title", {required: "Ingresar título"})}
                             error={!!articleErrors.title}
@@ -427,6 +431,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                         <TextField
                             fullWidth
                             label="Descripción"
+                            inputProps={{maxLength: 250}}
                             multiline
                             rows={4}
                             {...registerArticle("description")}
@@ -437,6 +442,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                         <TextField
                             fullWidth
                             label="Enlace"
+                            inputProps={{maxLength: 250}}
                             {...registerArticle("link")}
                             error={!!articleErrors.link}
                             helperText={articleErrors.link?.message}
