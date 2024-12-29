@@ -2,13 +2,19 @@ import React, { useEffect, useState } from 'react';
 import api from '../api';
 import { Box, Card, CardContent, Grid, IconButton, Typography, Alert, Button, Dialog, 
     DialogActions, DialogContent, TextField, Snackbar, SnackbarCloseReason, CardActions, 
-    DialogTitle, Tooltip, CircularProgress } from '@mui/material';
+    DialogTitle, Tooltip, CircularProgress, 
+    Checkbox,
+    InputAdornment,
+    Divider} from '@mui/material';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { useForm } from 'react-hook-form';
 import { Article } from '../interfaces/Article';
-import ArticleDetails from './ArticleDetails';
+import ClearIcon from '@mui/icons-material/Clear';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import CloseIcon from '@mui/icons-material/Close';
+import NavigateBack from './NavigateBack';
 
 type ArticleValues = {
     title: string,
@@ -20,6 +26,8 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     const articlesURL = "/articles"
     const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
     const [articles, setArticles] = useState<Article[]>([])
+    const [filteredArticles, setFilteredArticles] = useState<Article[]>([])
+    const [searchQuery, setSearchQuery] = useState("");
     const currentExpertId = window.sessionStorage.getItem("e_id") || window.localStorage.getItem("e_id")
     const [showEditForm, setShowEditForm] = useState(false)
     const [showCreateForm, setShowCreateForm] = useState(false)
@@ -29,6 +37,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     const [allDone, setAllDone] = useState(false)
     const [openArticle, setOpenArticle] = useState(false)
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
+    const [showUserUploaded, setShowUserUploaded] = useState(false)
     const queryParams = "?we=true"
     const articleForm = useForm<ArticleValues>({
         mode: "onBlur",
@@ -43,7 +52,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     const { errors: articleErrors, isValid: isArticleValid } = articleFormState;
 
     useEffect(() => {
-        document.title = "Artículos de salud - EF Admin";
+        document.title = "Artículos de salud - EyesFood";
         api.get(`${articlesURL}${queryParams}`, {
             withCredentials: true,
             headers: {
@@ -52,6 +61,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
         })
         .then(res => {
             setArticles(res.data)
+            setFilteredArticles(res.data)
         })
         .catch(error => {
             console.error("Error fetching data:", error);
@@ -64,6 +74,21 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     
     }, []);
 
+    useEffect(()=>{
+        let newFilteredArticles = articles
+        if (showUserUploaded){
+            newFilteredArticles = newFilteredArticles.filter((article) => article.expertId === currentExpertId)
+        }
+        if (searchQuery.length>2){
+            const lowercasedQuery = searchQuery.toLowerCase()
+            newFilteredArticles = newFilteredArticles.filter((article) => 
+                article.title?.toLowerCase().includes(lowercasedQuery) || 
+                article.description?.toLowerCase().includes(lowercasedQuery)
+            )
+        }
+        setFilteredArticles(newFilteredArticles)
+    }, [showUserUploaded, searchQuery])
+
     const handleSnackbarClose = (
         event: React.SyntheticEvent | Event,
         reason?: SnackbarCloseReason,
@@ -74,15 +99,24 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     
         setSnackbarOpen(false);
       }
-    const handleOpenArticle = (article: Article) => {
-        setSelectedArticle(article)
-        setOpenArticle(true)
+    
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value);
     };
 
-    const handleCloseArticle = () => {
-        setOpenArticle(false);
-        setSelectedArticle(null);
+    const handleOpenLink = (article:Article) => {
+        if (article.link){
+            const url = article.link.startsWith('http://') || article.link.startsWith('https://')
+                ? article.link
+                : `https://${article.link}`; 
+
+            window.open(url, '_blank')
+        }
     };
+
+    const handleClear = () => {
+        setSearchQuery('')
+    }
 
     const handleDeleteArticle = (article: Article) => {
         setSelectedArticle(article)
@@ -110,6 +144,10 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
         setShowCreateForm(false)
         setSelectedArticle(null)
     }
+
+    const handleSwitchChange = () => {
+        setShowUserUploaded(!showUserUploaded)
+    };
 
     const onCreateArticle = (data: ArticleValues) => {
         // console.log(data)
@@ -200,35 +238,87 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                     zIndex: 100,
                     boxShadow: 3,
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection: "row",
                     alignItems: "center",
                     borderBottom: "5px solid",
-                    borderColor: "secondary.main",
-                    boxSizing: "border-box"
-                  }}
-            >
-                <Typography variant='h5' width="100%"  color="primary.contrastText" sx={{py:1, borderLeft: "3px solid",
-                    borderRight: "3px solid",
+                    borderLeft: "5px solid",
+                    borderRight: "5px solid",
                     borderColor: "secondary.main",
                     boxSizing: "border-box",
-                }}>
-                    Artículos
-                </Typography>
+                    color: "primary.contrastText"
+                  }}
+            >
+                <Box sx={{display: "flex", flex: 1}}>
+                    <NavigateBack/>
+                </Box>
+                <Box sx={{display: "flex", flex: 4}}>
+                    <Typography variant='h6' width="100%"  color="primary.contrastText" sx={{py:1}}>
+                        Artículos de salud
+                    </Typography>
+                </Box>
+                <Box sx={{display: "flex", flex: 1}}>
+                </Box>
             </Box>
 
             <Box sx={{
                 display:"flex", 
-                flexDirection:"row", 
-                justifyContent:"space-around",
-                flexWrap: "wrap",
-                alignItems:"stretch",
-                width: "100vw", 
-                maxWidth:"1000px", 
-                gap:"10px"
+                flexDirection:"column", 
+                justifyContent:"center",
+                alignItems:"center",
+                width: "100%", 
+                maxWidth:"500px", 
+                gap:2
             }}
-            >
-            
-                { articles.map((article)=>{
+            >   
+                <TextField 
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    placeholder="Buscar artículo"
+                    variant="standard"
+                    inputProps={{maxLength: 100}}
+                    sx={{mt: 0.5, width:"90%", maxWidth: "400px"}}
+                    InputProps={{
+                        endAdornment: (
+                            searchQuery && (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={handleClear} // Clear the input
+                                        edge="end"
+                                    >
+                                        <ClearIcon />
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        ),
+                    }}
+                />
+                {
+                    canCreateArticle && <>
+                    <Box sx={{display:"flex", alignItems: "center", justifyContent: "center", width: "95%"}}>
+                        <Box sx={{display: "flex", alignItems: "center", cursor: "pointer"}} onClick={handleSwitchChange}>
+                            <Checkbox 
+                            id={"filter"}
+                            checked={showUserUploaded}
+                            onChange={handleSwitchChange}
+                            size="small"
+                            />
+                            <Typography variant='subtitle2' sx={{textDecoration: "underline"}}>
+                                Subidos por mi
+                            </Typography>
+                        </Box>
+                        <Divider orientation='vertical' flexItem sx={{px:1}}/>
+                        <Button onClick={handleOpenCreateArticle} >
+                            <AddIcon/>
+                            <Typography variant='subtitle2' sx={{textDecoration: "underline"}}>
+                                Agregar artículo
+                            </Typography>
+                        </Button>
+                        
+                    </Box>
+                    </>
+                }
+                 
+                { filteredArticles.map((article)=>{
                     return (
                     <Card key={article.id} sx={{
                     border: "4px solid", 
@@ -236,30 +326,23 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                     bgcolor: "primary.contrastText",
                     width:"90%", 
                     maxWidth: "450px",
-                    height: "15vh",
-                    maxHeight: "250px", 
-                    minHeight: "100px",
+                    height: "auto",
+                    maxHeight: "500px", 
                     display:"flex",
+                    flexDirection: "column"
                     }}>
-                        <CardContent sx={{
-                        width:"80%",
-                        height: "100%", 
+                        <CardContent 
+                        sx={{
+                        width:"100%",
+                        height: "80%", 
                         display:"flex", 
-                        flexDirection: "row", 
+                        flexDirection: "column", 
                         justifyContent: "center",
                         alignItems: "center",
                         padding:0,
                         }}>
-                            <Box sx={{
-                                width:"100%", 
-                                height: "100%",
-                                display:"flex", 
-                                flexDirection: "column",
-                                justifyContent: "flex-start",
-                                
-                            }}>
-                                <Typography 
-                                variant="h6" 
+                            <Typography 
+                                variant="subtitle1" 
                                 color="secondary.contrastText" 
                                 width="100%" 
                                 sx={{alignContent:"center", 
@@ -268,48 +351,52 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                                     bgcolor: "secondary.main"}}
                                 >
                                     {article.title}
+                            </Typography>
+
+                            <Typography 
+                            variant='subtitle2' 
+                            color= "primary.dark" 
+                            sx={{
+                                textAlign:"left", 
+                                p:1,
+                                alignItems: "start", 
+                                justifyContent: "center", 
+                                display: "flex", 
+                                gap:1,
+                                height:"80%",
+                                overflow: "hidden", // Ensures content outside the box is hidden
+                                textOverflow: "ellipsis", // Adds "..." when text overflows
+                            }}>
+                                {article.description}
+                            </Typography>     
+
+                            <Box sx={{display: "flex", width: "100%", justifyContent: "flex-end"}}>
+                                <Typography variant='subtitle2' sx={{fontStyle: "italic", pr:1}}>
+                                    Subido por {article.expertProfile?.user?.name}
                                 </Typography>
-                                <Typography 
-                                variant='subtitle1' 
-                                color= "primary.dark" 
-                                sx={{
-                                    textAlign:"left", 
-                                    ml:1, 
-                                    alignItems: "start", 
-                                    justifyContent: "center", 
-                                    display: "flex", 
-                                    gap:1,
-                                    height:"80%",
-                                    overflow: "hidden", // Ensures content outside the box is hidden
-                                    textOverflow: "ellipsis", // Adds "..." when text overflows
-                                }}>
-                                    {article.description}
-                                </Typography>                               
-                            </Box>
+                            </Box>                          
+                           
                         </CardContent>
-                        <CardActions sx={{padding:0, width:"20%"}}>
+                        <CardActions sx={{padding:0, width:"100%", height: "20%"}}>
                         <Box sx={{
                             width:"100%", 
                             display:"flex", 
                             height: "100%",
-                            flexDirection: "column",
-                            justifyContent: "center",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
                             alignItems: "center",
                             bgcolor: "primary.dark",
                             }}>
+                                <Box sx={{display:"flex", flex: 2, justifyContent: "center"}}>
+                                    <Button onClick={() => {handleOpenLink(article)}}  
+                                        sx={{color: "secondary.main", p:0}}
+                                    >
+                                        <OpenInNewIcon fontSize='small'/>
+                                        Ver artículo
+                                    </Button>
+                                </Box>
                                 {article.expertId===currentExpertId
-                                    ?<><Tooltip title="Eliminar artículo" key="delete" placement="right" arrow={true}>
-                                            <IconButton onClick={()=>handleDeleteArticle(article)}>
-                                                <DeleteForeverRoundedIcon
-                                                sx={{
-                                                    color:"error.main", 
-                                                    fontSize: {
-                                                        xs: 18,   // font size for extra small screens (mobile)
-                                                        sm: 24,   // font size for large screens (desktops)
-                                                    }
-                                                }}/>
-                                            </IconButton>
-                                        </Tooltip>
+                                    ?<Box sx={{display: "flex", justifyContent: "flex-end"}}>
                                         <Tooltip title="Modificar artículo" key="edit" placement="right" arrow={true}>
                                             <IconButton onClick={()=>handleOpenArticleForm(article)}>
                                                 <EditIcon 
@@ -321,44 +408,46 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                                                     }
                                                 }}/>
                                             </IconButton>
-                                        </Tooltip></>
+                                        </Tooltip>
+                                        <Tooltip title="Eliminar artículo" key="delete" placement="right" arrow={true}>
+                                            <IconButton onClick={()=>handleDeleteArticle(article)}>
+                                                <DeleteForeverRoundedIcon
+                                                sx={{
+                                                    color:"error.main", 
+                                                    fontSize: {
+                                                        xs: 18,   // font size for extra small screens (mobile)
+                                                        sm: 24,   // font size for large screens (desktops)
+                                                    }
+                                                }}/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Box>
                                 :<></>}
-                                 
-                                <Button onClick={() => {
-                                handleOpenArticle(article)
-                                }} 
-                                variant='text' 
-                                sx={{color: "secondary.main", 
-                                    fontSize: {
-                                        xs: 12,   // font size for extra small screens (mobile)
-                                        sm: 16,   // font size for large screens (desktops)
-                                    }, 
-                                    padding:0
-                                }}>
-                                    Ver más
-                                </Button>
                             </Box>
                         </CardActions>
                     </Card> 
                 )}
             )}
-            {selectedArticle && (
-                <ArticleDetails 
-                article={selectedArticle} 
-                open={openArticle} 
-                onClose={handleCloseArticle} 
-                    />
-            )}
             <Dialog open={showEditForm} onClose={handleCloseArticleForm} 
             PaperProps={{
                 sx: {
                     maxHeight: '80vh', 
-                    width: "85vw",
-                    maxWidth: "450px"
+                    width: "100vw",
+                    maxWidth: "450px",
+                    margin: 0
                 }
             }} >
-                <DialogTitle sx={{bgcolor: "primary.dark", color: "primary.contrastText"}}>
-                    Modificar artículo
+                <DialogTitle>
+                    <Box sx={{display:"flex", justifyContent: "space-between"}}>
+                        Modificar artículo
+                        <IconButton
+                        color="inherit"
+                        onClick={handleCloseArticleForm}
+                        sx={{p:0}}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </DialogTitle>
                 <DialogContent sx={{
                     padding:0.5,
@@ -396,7 +485,6 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                             margin="normal"
                         />
                         <DialogActions>
-                            <Button onClick={handleCloseArticleForm}>Cancelar</Button>
                             <Button type="submit" variant="contained" disabled={!isArticleValid}>Guardar</Button>
                         </DialogActions>
                     </form>
@@ -406,12 +494,22 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
             PaperProps={{
                 sx: {
                     maxHeight: '80vh', 
-                    width: "85vw",
-                    maxWidth: "450px"
+                    width: "100vw",
+                    maxWidth: "450px",
+                    margin: 0
                 }
             }} >
-                <DialogTitle sx={{bgcolor: "primary.dark", color: "primary.contrastText"}}>
-                    Crear artículo
+                <DialogTitle>
+                    <Box sx={{display:"flex", justifyContent: "space-between"}}>
+                        Agregar artículo
+                        <IconButton
+                        color="inherit"
+                        onClick={handleCloseCreateArticle}
+                        sx={{p:0}}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </DialogTitle>
                 <DialogContent sx={{
                     padding:0.5,
@@ -449,7 +547,6 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                             margin="normal"
                         />
                         <DialogActions>
-                            <Button onClick={handleCloseCreateArticle}>Cancelar</Button>
                             <Button type="submit" variant="contained" disabled={!isArticleValid}>Guardar</Button>
                         </DialogActions>
                     </form>
@@ -457,16 +554,18 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
             </Dialog>        
 
             <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
-                <DialogTitle>Borrar artículo: {selectedArticle?.title}</DialogTitle>
+                <DialogTitle>Borrar artículo</DialogTitle>
                 <DialogContent>
-                    ¿Seguro que desea borrar este artículo?  
+                    <Typography variant='subtitle1'>
+                        ¿Seguro que desea borrar este artículo?
+                    </Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setShowDeleteDialog(false)} color="primary">
-                        Cancelar
+                        No
                     </Button>
                     <Button onClick={onDeleteArticle} variant="contained" color="primary">
-                        Borrar
+                        Sí
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -480,27 +579,6 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                     {snackbarMsg}
                 </Alert>
             </Snackbar>
-            {canCreateArticle && 
-                <Button onClick={handleOpenCreateArticle}
-                variant="dark" 
-                sx={{
-                    display: "flex",
-                    position: 'fixed',
-                    bottom: 0, // 16px from the bottom
-                    zIndex: 100, // High zIndex to ensure it's on top of everything
-                    height: "48px",
-                    width: "50%",
-                    maxWidth: "500px"
-                }}
-                >
-                    <AddIcon sx={{fontSize: 40}}></AddIcon>
-                    <Typography variant='subtitle1' color={"inherit"}>
-                        Crear artículo
-                    </Typography>
-                    
-                </Button>
-            }
-            
         </Box>
    
         </Grid>

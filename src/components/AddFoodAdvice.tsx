@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import api from '../api';
 import { Typography, RadioGroup, FormControlLabel, Radio, Alert, Button, Dialog, DialogActions, DialogContent, 
-    TextField, Snackbar, SnackbarCloseReason, DialogTitle, FormLabel } from '@mui/material';
+    TextField, Snackbar, SnackbarCloseReason, DialogTitle, FormLabel, 
+    Box,
+    IconButton} from '@mui/material';
 import { useParams } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-
+import CloseIcon from '@mui/icons-material/Close';
 
 const AddFoodAdvice: React.FC= () => {
     const {id} = useParams()
@@ -61,7 +63,7 @@ const AddFoodAdvice: React.FC= () => {
         })
         .then((res) => {
             setSnackbarOpen(true);
-            setSnackbarMsg("Recomendación creada con éxito")
+            setSnackbarMsg("Consejo creado con éxito")
             handleCloseCreateFoodAdvice()
         })
         .catch((error) => {
@@ -98,12 +100,22 @@ const AddFoodAdvice: React.FC= () => {
             PaperProps={{
                 sx: {
                     maxHeight: '80vh', 
-                    width: "85vw",
+                    width: "100vw",
                     maxWidth: "450px",
+                    margin: 0
                 }
             }} >
-                <DialogTitle sx={{bgcolor: "primary.dark", color: "primary.contrastText"}}>
-                    Agregar recomendación
+                <DialogTitle>
+                    <Box sx={{display:"flex", justifyContent: "space-between"}}>
+                        Agregar consejo
+                        <IconButton
+                        color="inherit"
+                        onClick={handleCloseCreateFoodAdvice}
+                        sx={{p:0}}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </DialogTitle>
                 <DialogContent sx={{
                     padding:0.5,
@@ -115,20 +127,19 @@ const AddFoodAdvice: React.FC= () => {
                             helperText={`${adviceContent.length}/250`}
                             fullWidth
                             onChange={(e) => handleContentChange(e.target.value)}
-                            label="Recomendación"
+                            label="Consejo"
                             multiline
                             rows={5}
                             margin="normal"
                         />
-                            <FormLabel component="legend">Tipo de recomendación</FormLabel>
+                            <FormLabel component="legend">Tipo de consejo</FormLabel>
                             <RadioGroup
                                 row // Optional: This makes the radios appear horizontally
                                 onChange={(e) => handleTypeChange(e.target.value)}
                                 value={adviceType}
                             >
-                                <FormControlLabel value="warning" control={<Radio />} label="General" />
-                                <FormControlLabel value="positive" control={<Radio />} label="Positiva" />
-                                <FormControlLabel value="negative" control={<Radio />} label="Negativa" />
+                                <FormControlLabel value="positive" control={<Radio />} label="Recomendación" />
+                                <FormControlLabel value="negative" control={<Radio />} label="Advertencia" />
                             </RadioGroup>
                         <DialogActions>
                             <Button onClick={handleCloseCreateFoodAdvice}>Cancelar</Button>

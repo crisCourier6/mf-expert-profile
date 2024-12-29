@@ -9,6 +9,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import RuleIcon from '@mui/icons-material/Rule';
 import { useParams } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
 
 const FoodAdviceList: React.FC = () => {
     const [openList, setOpenList] = useState(false)
@@ -150,13 +151,29 @@ const FoodAdviceList: React.FC = () => {
             fullScreen
             PaperProps={{
                 sx: {
+                    height: "auto",
                     maxHeight: '80vh', 
-                    width: "95vw",
-                    maxWidth: "500px"
+                    width: "100vw",
+                    maxWidth: "500px",
+                    margin: 0
                 }
             }}>
-                <DialogTitle sx={{bgcolor: "primary.dark", color: "primary.contrastText", textAlign: "center"}}>
-                        Recomendaciones de consumo
+                <DialogTitle sx={{bgcolor: "primary.dark", color: "primary.contrastText"}}>
+                    <Box sx={{display:"flex", justifyContent: "space-between", alignItems: "flex-start", height:"100%"}}>
+                        <Typography variant="h6" textAlign={"center"} sx={{color: "primary.contrastText"}}>
+                            Consejos de consumo
+                        </Typography>
+                        
+                        <Box sx={{display: "flex", flex:0.5, justifyContent: "flex-end"}}>
+                            <IconButton
+                            onClick={()=>setOpenList(false)}
+                            sx={{p:0}}
+                            >
+                                <CloseIcon sx={{color: "primary.contrastText"}} />
+                            </IconButton>
+                        </Box>
+                    </Box>
+            
                 </DialogTitle>
                 <DialogContent dividers sx={{padding:1}}>
                     <Box sx={{ 
@@ -265,25 +282,29 @@ const FoodAdviceList: React.FC = () => {
                             })}
                     </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={()=>setOpenList(false)}
-                        variant="contained"
-                    >
-                        Cerrar
-                    </Button>
-                </DialogActions>
                 {/* Edit Comment Dialog */}
                 <Dialog open={showEditDialog} onClose={() => setShowEditDialog(false)}
                     PaperProps={{
                         sx: {
                             maxHeight: '80vh', 
-                            width: "85vw",
-                            maxWidth: "450px"
+                            width: "100vw",
+                            maxWidth: "450px",
+                            margin: 0
                         }
                     }} 
                 >
-                    <DialogTitle>Editar Comentario</DialogTitle>
+                    <DialogTitle>
+                        <Box sx={{display:"flex", justifyContent: "space-between"}}>
+                            Editar consejo
+                            <IconButton
+                            color="inherit"
+                            onClick={()=>setShowEditDialog(false)}
+                            sx={{p:0}}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+                    </DialogTitle>
                     <DialogContent>
                         <TextField
                             inputProps={{maxLength: 250}}
@@ -302,7 +323,6 @@ const FoodAdviceList: React.FC = () => {
                                 onChange={(e) => setEditedType(e.target.value)}
                                 value={editedType}
                             >
-                                <FormControlLabel value="warning" control={<Radio />} label="General" />
                                 <FormControlLabel value="positive" control={<Radio />} label="Positiva" />
                                 <FormControlLabel value="negative" control={<Radio />} label="Negativa" />
                             </RadioGroup>

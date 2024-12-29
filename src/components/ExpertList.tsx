@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import { Box, Card, CardContent, Grid, IconButton, Typography, Button, InputAdornment, TextField, CardActions } from '@mui/material';
+import { Box, Card, CardContent, Grid, IconButton, Typography, Button, InputAdornment, TextField, CardActions, SnackbarCloseReason, Snackbar, Alert } from '@mui/material';
 import { Expert } from '../interfaces/Expert';
 import { Comment } from '../interfaces/Comment';
 import InsertLinkRoundedIcon from '@mui/icons-material/InsertLinkRounded';
@@ -11,6 +11,7 @@ import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import CommentRoundedIcon from '@mui/icons-material/CommentRounded';
 import ExpertProfile from './ExpertProfile';
+import NavigateBack from './NavigateBack';
 
 const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ isAppBarVisible, onReady }) => {
     const expertsURL = "/expert-profile"
@@ -35,6 +36,8 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     const [selectedComments, setSelectedComments] = useState<Comment[]>([])
     const [scrollToComments, setScrollToComments] = useState(false)
     const commentsQueryParams = "?wu=true&we=true"
+    const [snackbarMsg, setSnackbarMsg] = useState("")
+    const [snackbarOpen, setSnackbarOpen] = useState(false)
     
 
     useEffect(() => {
@@ -177,12 +180,25 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
         setSelectedExpert(null);
     };
 
+    const handleSnackbarClose = (
+        event: React.SyntheticEvent | Event,
+        reason?: SnackbarCloseReason,
+      ) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setSnackbarOpen(false);
+      }
+
     const updateComment = (updatedComment: Comment) => {
         setComments((prevComments) =>
             prevComments.map((comment) =>
                 comment.id === updatedComment.id ? updatedComment : comment
             )
         );
+        setSnackbarMsg("Comentario modificado!")
+        setSnackbarOpen(true)
         //console.log("actualice comments")
     };
 
@@ -191,11 +207,15 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
         setComments((prevComments) =>
             prevComments.filter((comment) => comment.id !== commentId)
         );
+        setSnackbarMsg("Comentario eliminado!")
+        setSnackbarOpen(true)
         //console.log("actualice comments")
     };
 
     const newComment = (newComment: Comment) => {
-        setComments(prevComments => [...prevComments, newComment]);
+        setComments(prevComments => [newComment, ...prevComments ]);
+        setSnackbarMsg("Comentario creado!")
+        setSnackbarOpen(true)
     };
 
     return ( allDone?
@@ -216,25 +236,32 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                     zIndex: 100,
                     boxShadow: 3,
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection: "row",
                     alignItems: "center",
                     borderBottom: "5px solid",
+                    borderLeft: "5px solid",
+                    borderRight: "5px solid",
+                    color: "primary.contrastText",
                     borderColor: "secondary.main",
                     boxSizing: "border-box"
                   }}
             >
-                <Typography variant='h5' width="100%"  color="primary.contrastText" sx={{py:1, borderLeft: "3px solid",
-                    borderRight: "3px solid",
-                    borderColor: "secondary.main",
-                    boxSizing: "border-box",
-                }}>
-                    Expertos
-                </Typography>
+                <Box sx={{display: "flex", flex: 1}}>
+                    <NavigateBack/>
+                </Box>
+                <Box sx={{display: "flex", flex: 4}}>
+                    <Typography variant='h6' width="100%"  color="primary.contrastText" sx={{py:1}}>
+                        Nutricionistas
+                    </Typography>
+                </Box>
+                <Box sx={{display: "flex", flex: 1}}>
+                </Box>
             </Box>
             <Box sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "flex-start",
+                alignItems: "center",
                 width: "90%"
             }}>
                 <TextField 
@@ -244,7 +271,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                     variant="standard"
                     inputProps={{maxLength: 100}}
                     fullWidth
-                    sx={{mt: 0.5, maxWidth: "60%"}}
+                    sx={{mt: 0.5, maxWidth: "100%"}}
                     InputProps={{
                         endAdornment: (
                             searchQuery && (
@@ -410,12 +437,13 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                                 setScrollToComments(false)
                                 }} 
                                 variant='text' 
-                                sx={{color: "secondary.main", fontSize:12, padding:0}}>
-                                Ver más
+                                sx={{color: "secondary.main", fontSize:14, padding:1}}>
+                                Ver perfil
                             </Button>
                         </Box>
                     </CardActions>
                 </Card> 
+                
             )}
         )}
             {selectedExpert && (
@@ -429,6 +457,20 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                 scrollToComments = {scrollToComments}
                  />
             )}
+            <Snackbar
+            open = {snackbarOpen}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} 
+                severity={snackbarMsg.includes("Error")?"error":"success"} 
+                variant="filled"
+                sx={{ 
+                    width: '100%'
+                }}>
+                    {snackbarMsg}
+                </Alert>
+            </Snackbar>  
    
         </Grid>
         

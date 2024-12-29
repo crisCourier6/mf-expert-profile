@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
 
 interface ExpertProfileProps {
     expert: Expert;
@@ -40,7 +42,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [newCommentContent, setNewCommentContent] = useState("");
     const [isRecommended, setIsRecommended] = useState<null|boolean>(null);
-    const [expandedComments, setExpandedComments] = useState(false);
+    const [expandedComments, setExpandedComments] = useState(true);
     const commentsRef = useRef<HTMLDivElement>(null);
     const commentsURL = "/comments-expert"
     useEffect(()=>{
@@ -174,38 +176,51 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                 maxWidth: "500px"
             }
         }}>
-            <DialogTitle sx={{padding:0.5, bgcolor: "primary.dark"}}>
-            <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: "center", 
-                    flexDirection: "column",
-                    gap: 0.5
-                }}>
-                    <Avatar
-                        alt={expert.user?.name}
-                        sx={{ width: 64, height: 64, bgcolor :"transparent" }}
-                       
-                    >
-                        {expert.user?.profilePic === "default_profile.png" ? (
-                            <NoPhotoIcon height={48} width={48} fill='white' /> // Render the icon when it's the default profile picture
-                        ) : (
-                            <img
-                                src={expert.user?.profilePic}
-                                alt={expert.user?.name}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                        )}
-                    </Avatar> 
-                    
-
-                    <Typography variant='h6' width="100%"  color="primary.contrastText" textAlign={"center"}>
-                        {expert.user?.name}
-                    </Typography>
-                    <Typography variant="subtitle1" textAlign={"center"} color="primary.contrastText">
-                        {professions}
-                    </Typography>
+            <DialogTitle sx={{bgcolor: "primary.dark"}}>
+                <Box sx={{display:"flex", justifyContent: "space-between", alignItems: "flex-start", height: "100%"}}>
+                    <Box sx={{display: "flex", flex:1}}>
+                        <Avatar
+                            alt={expert.user?.name}
+                            sx={{ width: "100%", height: "auto", bgcolor :"transparent" }}
+                        
+                        >
+                            {expert.user?.profilePic === "default_profile.png" ? (
+                                <NoPhotoIcon height={"100%"} width={"100%"} fill='white' /> // Render the icon when it's the default profile picture
+                            ) : (
+                                <img
+                                    src={expert.user?.profilePic}
+                                    alt={expert.user?.name}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            )}
+                        </Avatar> 
+                    </Box>
+                        <Box sx={{ 
+                        display: 'flex', 
+                        height: "100%",
+                        flex: 5,
+                        alignItems: 'center', 
+                        justifyContent: "center", 
+                        flexDirection: "column",
+                        gap: 0.5
+                    }}>
+                        <Typography variant='h6' width="100%"  color="primary.contrastText" textAlign={"center"}>
+                            {expert.user?.name}
+                        </Typography>
+                        <Typography variant="subtitle1" textAlign={"center"} color="primary.contrastText">
+                            {professions}
+                        </Typography>
+                    </Box>
+                    <Box sx={{display: "flex", flex:0.5, justifyContent: "flex-end"}}>
+                        <IconButton
+                        onClick={onClose}
+                        sx={{p:0}}
+                        >
+                            <CloseIcon sx={{color: "primary.contrastText"}} />
+                        </IconButton>
+                    </Box>
                 </Box>
+            
             </DialogTitle>
             <DialogContent dividers sx={{padding:1}}>
                 <Typography variant='h6'>
@@ -290,16 +305,26 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                 <Typography variant="h6" onClick={toggleExpand} sx={{ cursor: 'pointer' }}>
                     Comentarios {expandedComments ? "▲" : "▼"}
                 </Typography>
-                {expandedComments && 
                 <Box ref={commentsRef} sx={{ 
                     display: 'flex', 
                     width: "100%",
                     alignItems: 'center', 
                     justifyContent: "center", 
                     flexDirection: "column",
-                    gap:1,
+                    gap:2,
                 }}>
-                    {localComments.map(comment => {
+                {
+                expandedComments && currentUserId!=expert.userId && <>
+                    <Button onClick={openCreateDialog} sx={{mt:1}}>
+                        <AddIcon/>
+                        <Typography variant='subtitle2' sx={{textDecoration: "underline"}}>
+                            Agregar comentario
+                        </Typography>
+                    </Button>
+                    </>
+                }
+                {expandedComments && 
+                    localComments.map(comment => {
                         return (
                             <Box key={comment.id} sx={{ 
                                 display: 'flex', 
@@ -344,7 +369,18 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                                     justifyContent: "start",
                                     borderRadius:0
                                 }}>
-                                    <Box sx={{ display: "flex", flexDirection: "row-reverse", width:"100%", gap: 0.5 }}> {/* Wrap icons in a box for layout */}
+                                    <Box sx={{ display: "flex", flexDirection: "row-reverse", width:"100%", gap: 2 }}> {/* Wrap icons in a box for layout */}
+                                                        
+                                        {comment.userId === currentUserId && 
+                                            <>
+                                                <IconButton size="small" onClick={() => openDeleteDialog(comment)}>
+                                                    <DeleteForeverRoundedIcon sx={{ 
+                                                        color: "error.main", 
+                                                        fontSize:18
+                                                    }} />
+                                                </IconButton>
+                                            </>
+                                        }   
                                         {comment.userId === currentUserId && 
                                             <>
                                                 <IconButton size="small" onClick={() => openEditDialog(comment)}>
@@ -352,16 +388,6 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                                                         color: comment.isRecommended ? "secondary.contrastText" : "primary.contrastText",
                                                         fontSize: 18
                                                     }}/>
-                                                </IconButton>
-                                            </>
-                                        }                   
-                                        {comment.userId === currentUserId && 
-                                            <>
-                                                <IconButton size="small" onClick={() => openDeleteDialog(comment)}>
-                                                    <DeleteForeverRoundedIcon sx={{ 
-                                                        color: comment.isRecommended ? "secondary.contrastText" : "primary.contrastText", 
-                                                        fontSize:18
-                                                    }} />
                                                 </IconButton>
                                             </>
                                         }   
@@ -372,22 +398,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                         )
                     })}
                 </Box>
-                }
             </DialogContent>
-            <DialogActions>
-                {currentUserId!=expert.userId && <>
-                <Button variant='contained' onClick={openCreateDialog}>
-                    Comentar
-                </Button>
-                </>
-                }
-                <Button
-                    onClick={onClose}
-                    variant="contained"
-                >
-                    Cerrar
-                </Button>
-            </DialogActions>
             {/* Edit Comment Dialog */}
             <Dialog open={showEditDialog} onClose={() => setShowEditDialog(false)}
                 PaperProps={{
@@ -447,16 +458,17 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                     <Typography>¿Seguro que quieres borrar tu comentario?</Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setShowDeleteDialog(false)}>Cancelar</Button>
-                    <Button onClick={handleDeleteComment} variant="contained" color="error">Borrar</Button>
+                    <Button onClick={() => setShowDeleteDialog(false)}>No</Button>
+                    <Button onClick={handleDeleteComment} variant="contained">Sí</Button>
                 </DialogActions>
             </Dialog>
             <Dialog open={showCreateDialog} onClose={closeCreateDialog}
             PaperProps={{
                 sx: {
                     maxHeight: '80vh', 
-                    width: "85vw",
-                    maxWidth: "450px"
+                    width: "100vw",
+                    maxWidth: "450px",
+                    margin: 0
                 }
             }} >
                 <DialogTitle>Nuevo comentario - {expert.user?.name}</DialogTitle>
