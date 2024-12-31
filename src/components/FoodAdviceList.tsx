@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import RuleIcon from '@mui/icons-material/Rule';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 
 const FoodAdviceList: React.FC = () => {
@@ -148,7 +148,6 @@ const FoodAdviceList: React.FC = () => {
             <Dialog 
             open={openList} 
             onClose={()=>setOpenList(false)} 
-            fullScreen
             PaperProps={{
                 sx: {
                     height: "auto",
@@ -188,7 +187,7 @@ const FoodAdviceList: React.FC = () => {
                         {loadingAdvice 
                             ? <CircularProgress/> 
                             : foodAdvices.length===0
-                                ?   <Typography variant='subtitle1' textAlign={"center"}>
+                                ?   <Typography variant='subtitle1' textAlign={"center"} sx={{p:1}}>
                                         Aún no hay consejos de consumo para este alimento
                                     </Typography>
                                 :   foodAdvices.map(foodAdvice => {
@@ -207,7 +206,7 @@ const FoodAdviceList: React.FC = () => {
                                                 ?"warning.main"
                                                 :foodAdvice.type==="positive"
                                                     ?"secondary.main"
-                                                    :"error.main",
+                                                    :"warning.main",
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "space-between",
@@ -219,8 +218,20 @@ const FoodAdviceList: React.FC = () => {
                                                 ?"warning.contrastText"
                                                 :foodAdvice.type==="positive"
                                                     ?"secondary.contrastText"
-                                                    :"error.contrastText"}
-                                            sx={{flexGrow: 1, textAlign: "left", width: "80%", pl:1, fontSize:18}}
+                                                    :"warning.contrastText"}
+                                            sx={{
+                                                flexGrow: 1, 
+                                                textAlign: "left", 
+                                                width: "80%", 
+                                                pl:1, 
+                                                fontSize:18, 
+                                                color: "inherit",       // Optional, ensures link color matches the typography style
+                                                "&:hover": {
+                                                    textDecoration: "underline", // Adds underline on hover
+                                                }
+                                            }}
+                                            component={Link}
+                                            to={`/experts?expert=${foodAdvice.expertProfile?.id}`}
                                             >
                                                 {foodAdvice.expertProfile?.user?.name} 
                                             </Typography>
@@ -239,7 +250,7 @@ const FoodAdviceList: React.FC = () => {
                                                         ?"warning.main"
                                                         :foodAdvice.type==="positive"
                                                             ?"secondary.main"
-                                                            :"error.main", 
+                                                            :"warning.main", 
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "start",
@@ -254,7 +265,7 @@ const FoodAdviceList: React.FC = () => {
                                                                             ?"warning.contrastText"
                                                                             :foodAdvice.type==="positive"
                                                                                 ?"secondary.contrastText"
-                                                                                :"error.contrastText",
+                                                                                :"warning.contrastText",
                                                                 fontSize: 18
                                                             }}/>
                                                         </IconButton>
@@ -268,7 +279,7 @@ const FoodAdviceList: React.FC = () => {
                                                                             ?"warning.contrastText"
                                                                             :foodAdvice.type==="positive"
                                                                                 ?"secondary.contrastText"
-                                                                                :"error.contrastText", 
+                                                                                :"warning.contrastText", 
                                                                 fontSize:18
                                                             }} />
                                                         </IconButton>

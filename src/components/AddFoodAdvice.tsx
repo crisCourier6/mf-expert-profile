@@ -142,7 +142,6 @@ const AddFoodAdvice: React.FC= () => {
                                 <FormControlLabel value="negative" control={<Radio />} label="Advertencia" />
                             </RadioGroup>
                         <DialogActions>
-                            <Button onClick={handleCloseCreateFoodAdvice}>Cancelar</Button>
                             <Button onClick={onCreateFoodAdvice} variant="contained" disabled={adviceContent===""}>Guardar</Button>
                         </DialogActions>
                 </DialogContent>

@@ -15,6 +15,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateBack from './NavigateBack';
+import { Link } from 'react-router-dom';
 
 type ArticleValues = {
     title: string,
@@ -35,21 +36,21 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [snackbarMsg, setSnackbarMsg] = useState("")
     const [allDone, setAllDone] = useState(false)
-    const [openArticle, setOpenArticle] = useState(false)
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null)
     const [showUserUploaded, setShowUserUploaded] = useState(false)
     const queryParams = "?we=true"
     const articleForm = useForm<ArticleValues>({
-        mode: "onBlur",
-        reValidateMode: "onBlur",
+        mode: "onChange",
+        reValidateMode: "onChange",
         defaultValues: {
             title: "",
             description: "",
             link: ""
         }
     });
-    const { register: registerArticle, handleSubmit: handleSubmitArticle, formState: articleFormState } = articleForm;
+    const { register: registerArticle, handleSubmit: handleSubmitArticle, formState: articleFormState, watch } = articleForm;
     const { errors: articleErrors, isValid: isArticleValid } = articleFormState;
+    const description = watch('description', '');
 
     useEffect(() => {
         document.title = "Artículos de salud - EyesFood";
@@ -87,7 +88,7 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
             )
         }
         setFilteredArticles(newFilteredArticles)
-    }, [showUserUploaded, searchQuery])
+    }, [showUserUploaded, searchQuery, articles])
 
     const handleSnackbarClose = (
         event: React.SyntheticEvent | Event,
@@ -324,17 +325,16 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                     border: "4px solid", 
                     borderColor: "primary.dark", 
                     bgcolor: "primary.contrastText",
-                    width:"90%", 
+                    width:"95%", 
                     maxWidth: "450px",
                     height: "auto",
-                    maxHeight: "500px", 
                     display:"flex",
                     flexDirection: "column"
                     }}>
                         <CardContent 
                         sx={{
                         width:"100%",
-                        height: "80%", 
+                        height: "auto", 
                         display:"flex", 
                         flexDirection: "column", 
                         justifyContent: "center",
@@ -371,13 +371,25 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                             </Typography>     
 
                             <Box sx={{display: "flex", width: "100%", justifyContent: "flex-end"}}>
-                                <Typography variant='subtitle2' sx={{fontStyle: "italic", pr:1}}>
+                                <Typography variant='subtitle2' 
+                                sx={{
+                                    fontStyle: "italic", 
+                                    pr:1,
+                                    pb: 1,
+                                    color: "inherit",       // Optional, ensures link color matches the typography style
+                                    "&:hover": {
+                                        textDecoration: "underline", // Adds underline on hover
+                                    },
+                                }}
+                                component={Link}
+                                to={`/experts?expert=${article.expertProfile?.id}`}
+                                >
                                     Subido por {article.expertProfile?.user?.name}
                                 </Typography>
                             </Box>                          
                            
                         </CardContent>
-                        <CardActions sx={{padding:0, width:"100%", height: "20%"}}>
+                        <CardActions sx={{padding:0, width:"100%", maxHeight: "25px"}}>
                         <Box sx={{
                             width:"100%", 
                             display:"flex", 
@@ -472,7 +484,10 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                             rows={4}
                             {...registerArticle("description")}
                             error={!!articleErrors.description}
-                            helperText={articleErrors.description?.message}
+                            helperText={
+                                articleErrors.description?.message ||
+                                `${description.length}/${250}`
+                            }
                             margin="normal"
                         />
                         <TextField
@@ -534,7 +549,10 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
                             rows={4}
                             {...registerArticle("description")}
                             error={!!articleErrors.description}
-                            helperText={articleErrors.description?.message}
+                            helperText={
+                                articleErrors.description?.message ||
+                                `${description.length}/${250}`
+                            }
                             margin="normal"
                         />
                         <TextField

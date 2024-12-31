@@ -97,6 +97,17 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                         }
                     }
                     setExpertStats(stats);
+
+                    const params = new URLSearchParams(window.location.search);
+                    const defaultExpertId = params.get("expert");
+                    if (defaultExpertId) {
+                        const expert = expertsData.find((e: Expert) => e.id === defaultExpertId);
+                        if (expert) {
+                            handleOpenExpert(expert);
+                        } else {
+                            console.warn(`Expert with ID ${expertId} not found.`);
+                        }
+                    }
                 });
             })
             .catch(error => {
@@ -301,11 +312,8 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                     <Card key={expert.id} sx={{
                         border: "4px solid", 
                         borderColor: "primary.dark", 
-                        bgcolor: "primary.dark",
-                        width:"90%", 
-                        height: "20vh",
-                        maxHeight: "120px", 
-                        minHeight: "60px",
+                        width:"95%", 
+                        height: "auto",
                         display:"flex",
                         flexDirection: "column"
                     }}>
@@ -315,7 +323,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                                 }} 
                     sx={{
                         width:"100%",
-                        height: "75%", 
+                        height: "auto",
                         display:"flex", 
                         flexDirection: "row", 
                         justifyContent: "center",
@@ -325,12 +333,14 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                     }}>
                         <Box sx={{
                             width:"100%", 
-                            height: "100%",
                             display:"flex", 
                             flexDirection: "column",
                             justifyContent: "flex-start",
-                            bgcolor: "primary.contrastText"
+                            alignItems: "center",
+                            bgcolor: "primary.contrastText",
+                            
                         }}>
+                            
                             <Typography 
                                 variant="h6" 
                                 color="secondary.contrastText" 
@@ -342,63 +352,56 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                                 >
                                 {expert.user?.name}
                             </Typography>
-                            <Typography 
-                            variant='subtitle2' 
-                            color= "primary.dark" 
-                            sx={{
-                                textAlign:"left", 
-                                ml:1, 
-                                alignItems: "center", 
-                                justifyContent: "start", 
-                                display: "flex", 
-                                gap:1
-                            }}>
-                                <EmailRoundedIcon sx={{fontSize:18}}/>{expert.user?.email}
-                            </Typography>
-                            <Typography 
-                            variant='subtitle2' 
-                            color= "primary.dark" 
-                            sx={{
-                                textAlign:"left", 
-                                ml:1, 
-                                alignItems: "center", 
-                                justifyContent: "start", 
-                                display: "flex", 
-                                gap:1,
-                                bgcolor: "primary.contrastText"
-                            }}>
-                            <InsertLinkRoundedIcon sx={{fontSize:18}}/>
-                            {expert.webPage?
-                                <a 
-                                    href={expert.webPage?.startsWith('http')? expert.webPage : `https://${expert.webPage}`} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    style={{ color: 'blue', textDecoration: 'none' }}
-                                >
-                                    Ver página web
-                                </a>:
-                                <>Sin página web</>
-                            }
-                            </Typography>
-                            <Typography variant='subtitle2' color= "primary.dark" sx={{textAlign:"left", ml:1}}>
-                               <span style={{fontWeight: "bold"}}>Especialidad: </span>{expert.specialty}
-                            </Typography>
-                            <Box sx={{
-                                width:"100%", 
-                                display:"flex", 
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                bgcolor: "secondary.main"
-                            }}>     
-                            </Box>
+                            <Box sx={{width: "95%", display: "flex", flexDirection: "column", py:1}}>
+                                <Typography variant='subtitle2' color= "primary.dark" sx={{textAlign:"left"}}>
+                                    <span style={{fontWeight: "bold"}}>Especialidad: </span>{expert.specialty}
+                                </Typography>
+                                <Typography 
+                                variant='subtitle2' 
+                                color= "primary.dark" 
+                                sx={{
+                                    textAlign:"left", 
+                                    ml:1, 
+                                    alignItems: "center", 
+                                    justifyContent: "start", 
+                                    display: "flex", 
+                                    gap:1
+                                }}>
+                                    <EmailRoundedIcon sx={{fontSize:18}}/>{expert.user?.email}
+                                </Typography>
+                                <Typography 
+                                variant='subtitle2' 
+                                color= "primary.dark" 
+                                sx={{
+                                    textAlign:"left", 
+                                    ml:1, 
+                                    alignItems: "center", 
+                                    justifyContent: "start", 
+                                    display: "flex", 
+                                    gap:1,
+                                    bgcolor: "primary.contrastText"
+                                }}>
+                                <InsertLinkRoundedIcon sx={{fontSize:18}}/>
+                                {expert.webPage?
+                                    <a 
+                                        href={expert.webPage?.startsWith('http')? expert.webPage : `https://${expert.webPage}`} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        style={{ color: 'blue', textDecoration: 'none' }}
+                                    >
+                                        Ver página web
+                                    </a>:
+                                    <>Sin página web</>
+                                }
+                                </Typography>
                                 
+                            </Box>
                         </Box>
                     </CardContent>
-                    <CardActions sx={{padding:0, width:"100%", height: "25%"}}>
+                    <CardActions sx={{padding:0, width:"100%"}}>
                     <Box sx={{
                         width:"100%", 
                         display:"flex", 
-                        height: "100%",
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
