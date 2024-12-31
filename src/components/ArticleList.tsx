@@ -61,8 +61,9 @@ const ArticleList: React.FC<{ isAppBarVisible: boolean, canCreateArticle:boolean
             }
         })
         .then(res => {
-            setArticles(res.data)
-            setFilteredArticles(res.data)
+            const onlyActive = res.data.filter((article: Article) => article.expertProfile?.user?.isActive )
+            setArticles(onlyActive)
+            setFilteredArticles(onlyActive)
         })
         .catch(error => {
             console.error("Error fetching data:", error);

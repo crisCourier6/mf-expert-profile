@@ -41,7 +41,8 @@ const FoodAdviceList: React.FC = () => {
             })
             .then(res=>{
                 //console.log(res.data)
-                setFoodAdvices(res.data)
+                const onlyActive = res.data.filter((advice: FoodAdvice) => advice.expertProfile?.user?.isActive)
+                setFoodAdvices(onlyActive)
             })
             .catch(error => {
                 console.log(error.response)

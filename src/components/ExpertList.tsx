@@ -35,6 +35,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null)
     const [selectedComments, setSelectedComments] = useState<Comment[]>([])
     const [scrollToComments, setScrollToComments] = useState(false)
+    const expertsQueryParams = "?wu=true&onlyActive=true"
     const commentsQueryParams = "?wu=true&we=true"
     const [snackbarMsg, setSnackbarMsg] = useState("")
     const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -42,7 +43,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
 
     useEffect(() => {
         document.title = `Expertos - EyesFood`
-        const fetchExperts = api.get(expertsURL, {
+        const fetchExperts = api.get(`${expertsURL}${expertsQueryParams}`, {
             withCredentials: true,
             headers: {
                 Authorization: "Bearer " + token
@@ -125,7 +126,8 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
         } else {
             setExpertsFiltered(
                 experts.filter(expert =>
-                    expert.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+                    expert.user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || expert.specialty?.toLowerCase().includes(searchQuery.toLowerCase())
+                    
                 )
             );
         }
@@ -278,7 +280,7 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                 <TextField 
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    placeholder="Buscar por nombre"
+                    placeholder="Nombre o especialidad"
                     variant="standard"
                     inputProps={{maxLength: 100}}
                     fullWidth
@@ -301,154 +303,158 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
             </Box>
             
             
-            { expertsFiltered.map((expert)=>{
-                const stats = expertStats[expert.userId] || {
-                    recommendationCount: 0,
-                    totalComments: 0,
-                    userHasCommented: false,
-                    userHasRecommended: false,
-                };
-                return (
-                    <Card key={expert.id} sx={{
-                        border: "4px solid", 
-                        borderColor: "primary.dark", 
-                        width:"95%", 
-                        height: "auto",
-                        display:"flex",
-                        flexDirection: "column"
-                    }}>
-                    <CardContent onClick={() => {
-                                handleOpenExpert(expert)
-                                setScrollToComments(false)
-                                }} 
-                    sx={{
-                        width:"100%",
-                        height: "auto",
-                        display:"flex", 
-                        flexDirection: "row", 
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding:0,
-                        cursor: "pointer"
-                    }}>
+            { expertsFiltered.length>0 
+                ?   expertsFiltered.map((expert)=>{
+                    const stats = expertStats[expert.userId] || {
+                        recommendationCount: 0,
+                        totalComments: 0,
+                        userHasCommented: false,
+                        userHasRecommended: false,
+                    };
+                    return (
+                        <Card key={expert.id} sx={{
+                            border: "4px solid", 
+                            borderColor: "primary.dark", 
+                            width:"95%", 
+                            height: "auto",
+                            display:"flex",
+                            flexDirection: "column"
+                        }}>
+                        <CardContent onClick={() => {
+                                    handleOpenExpert(expert)
+                                    setScrollToComments(false)
+                                    }} 
+                        sx={{
+                            width:"100%",
+                            height: "auto",
+                            display:"flex", 
+                            flexDirection: "row", 
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding:0,
+                            cursor: "pointer"
+                        }}>
+                            <Box sx={{
+                                width:"100%", 
+                                display:"flex", 
+                                flexDirection: "column",
+                                justifyContent: "flex-start",
+                                alignItems: "center",
+                                bgcolor: "primary.contrastText",
+                                
+                            }}>
+                                
+                                <Typography 
+                                    variant="h6" 
+                                    color="secondary.contrastText" 
+                                    width="100%" 
+                                    sx={{alignContent:"center", 
+                                        borderBottom: "2px solid", 
+                                        borderColor: "primary.main", 
+                                        bgcolor: "secondary.main"}}
+                                    >
+                                    {expert.user?.name}
+                                </Typography>
+                                <Box sx={{width: "95%", display: "flex", flexDirection: "column", py:1}}>
+                                    <Typography variant='subtitle2' color= "primary.dark" sx={{textAlign:"left"}}>
+                                        <span style={{fontWeight: "bold"}}>Especialidad: </span>{expert.specialty}
+                                    </Typography>
+                                    <Typography 
+                                    variant='subtitle2' 
+                                    color= "primary.dark" 
+                                    sx={{
+                                        textAlign:"left", 
+                                        ml:1, 
+                                        alignItems: "center", 
+                                        justifyContent: "start", 
+                                        display: "flex", 
+                                        gap:1
+                                    }}>
+                                        <EmailRoundedIcon sx={{fontSize:18}}/>{expert.user?.email}
+                                    </Typography>
+                                    <Typography 
+                                    variant='subtitle2' 
+                                    color= "primary.dark" 
+                                    sx={{
+                                        textAlign:"left", 
+                                        ml:1, 
+                                        alignItems: "center", 
+                                        justifyContent: "start", 
+                                        display: "flex", 
+                                        gap:1,
+                                        bgcolor: "primary.contrastText"
+                                    }}>
+                                    <InsertLinkRoundedIcon sx={{fontSize:18}}/>
+                                    {expert.webPage?
+                                        <a 
+                                            href={expert.webPage?.startsWith('http')? expert.webPage : `https://${expert.webPage}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            style={{ color: 'blue', textDecoration: 'none' }}
+                                        >
+                                            Ver página web
+                                        </a>:
+                                        <>Sin página web</>
+                                    }
+                                    </Typography>
+                                    
+                                </Box>
+                            </Box>
+                        </CardContent>
+                        <CardActions sx={{padding:0, width:"100%"}}>
                         <Box sx={{
                             width:"100%", 
                             display:"flex", 
-                            flexDirection: "column",
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                            bgcolor: "primary.contrastText",
-                            
-                        }}>
-                            
-                            <Typography 
-                                variant="h6" 
-                                color="secondary.contrastText" 
-                                width="100%" 
-                                sx={{alignContent:"center", 
-                                    borderBottom: "2px solid", 
-                                    borderColor: "primary.main", 
-                                    bgcolor: "secondary.main"}}
-                                >
-                                {expert.user?.name}
-                            </Typography>
-                            <Box sx={{width: "95%", display: "flex", flexDirection: "column", py:1}}>
-                                <Typography variant='subtitle2' color= "primary.dark" sx={{textAlign:"left"}}>
-                                    <span style={{fontWeight: "bold"}}>Especialidad: </span>{expert.specialty}
-                                </Typography>
-                                <Typography 
-                                variant='subtitle2' 
-                                color= "primary.dark" 
-                                sx={{
-                                    textAlign:"left", 
-                                    ml:1, 
-                                    alignItems: "center", 
-                                    justifyContent: "start", 
-                                    display: "flex", 
-                                    gap:1
-                                }}>
-                                    <EmailRoundedIcon sx={{fontSize:18}}/>{expert.user?.email}
-                                </Typography>
-                                <Typography 
-                                variant='subtitle2' 
-                                color= "primary.dark" 
-                                sx={{
-                                    textAlign:"left", 
-                                    ml:1, 
-                                    alignItems: "center", 
-                                    justifyContent: "start", 
-                                    display: "flex", 
-                                    gap:1,
-                                    bgcolor: "primary.contrastText"
-                                }}>
-                                <InsertLinkRoundedIcon sx={{fontSize:18}}/>
-                                {expert.webPage?
-                                    <a 
-                                        href={expert.webPage?.startsWith('http')? expert.webPage : `https://${expert.webPage}`} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer" 
-                                        style={{ color: 'blue', textDecoration: 'none' }}
-                                    >
-                                        Ver página web
-                                    </a>:
-                                    <>Sin página web</>
-                                }
-                                </Typography>
-                                
-                            </Box>
-                        </Box>
-                    </CardContent>
-                    <CardActions sx={{padding:0, width:"100%"}}>
-                    <Box sx={{
-                        width:"100%", 
-                        display:"flex", 
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        bgcolor: "primary.dark",
-                        }}>
-                            <Box sx={{
-                            display: "flex",
                             flexDirection: "row",
+                            justifyContent: "space-between",
                             alignItems: "center",
-                            justifyContent: "center",
-                            gap:0
+                            bgcolor: "primary.dark",
                             }}>
-                                <IconButton disabled={true}>
-                                {stats.userHasRecommended ? <GradeRoundedIcon sx={{color: "secondary.main", fontSize:18}} /> : <GradeOutlinedIcon sx={{color: "primary.contrastText", fontSize:18}}/>}
-                                </IconButton>
-                                <Typography variant="subtitle1" color="primary.contrastText">{stats.recommendationCount}</Typography>
-                            </Box>
-                            <Box sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap:0
-                            }}>
-                                <IconButton onClick={() => {
+                                <Box sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap:0
+                                }}>
+                                    <IconButton disabled={true}>
+                                    {stats.userHasRecommended ? <GradeRoundedIcon sx={{color: "secondary.main", fontSize:18}} /> : <GradeOutlinedIcon sx={{color: "primary.contrastText", fontSize:18}}/>}
+                                    </IconButton>
+                                    <Typography variant="subtitle1" color="primary.contrastText">{stats.recommendationCount}</Typography>
+                                </Box>
+                                <Box sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap:0
+                                }}>
+                                    <IconButton onClick={() => {
+                                        handleOpenExpert(expert)
+                                        setScrollToComments(true)
+                                    }}>
+                                        {stats.userHasCommented ? <CommentRoundedIcon sx={{color: "secondary.main", fontSize:18}}/> : <CommentOutlinedIcon sx={{color: "primary.contrastText", fontSize:18}}/>}
+                                    </IconButton>
+                                    <Typography variant="body2" color="primary.contrastText">{stats.totalComments}</Typography>
+                                    
+                                </Box>
+                                <Button onClick={() => {
                                     handleOpenExpert(expert)
-                                    setScrollToComments(true)
-                                }}>
-                                    {stats.userHasCommented ? <CommentRoundedIcon sx={{color: "secondary.main", fontSize:18}}/> : <CommentOutlinedIcon sx={{color: "primary.contrastText", fontSize:18}}/>}
-                                </IconButton>
-                                <Typography variant="body2" color="primary.contrastText">{stats.totalComments}</Typography>
-                                
+                                    setScrollToComments(false)
+                                    }} 
+                                    variant='text' 
+                                    sx={{color: "secondary.main", fontSize:14, padding:1}}>
+                                    Ver perfil
+                                </Button>
                             </Box>
-                            <Button onClick={() => {
-                                handleOpenExpert(expert)
-                                setScrollToComments(false)
-                                }} 
-                                variant='text' 
-                                sx={{color: "secondary.main", fontSize:14, padding:1}}>
-                                Ver perfil
-                            </Button>
-                        </Box>
-                    </CardActions>
-                </Card> 
-                
-            )}
-        )}
+                        </CardActions>
+                    </Card> 
+                    
+                )})
+                : <Typography variant='subtitle1'>
+                    No se econtraron nutricionistas    
+                </Typography>
+            }
             {selectedExpert && (
                 <ExpertProfile expert={selectedExpert} 
                 comments={selectedComments} 
