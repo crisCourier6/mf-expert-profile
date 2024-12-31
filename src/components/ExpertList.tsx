@@ -68,6 +68,17 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                 setComments(commentsData);
                 setExpertsFiltered(expertsData);
 
+                const params = new URLSearchParams(window.location.search);
+                const defaultExpertId = params.get("expert");
+                if (defaultExpertId) {
+                    const expert = expertsData.find((e: Expert) => e.id === defaultExpertId);
+                    if (expert) {
+                        handleOpenExpert(expert);
+                    } else {
+                        console.warn(`Expert with ID ${defaultExpertId} not found.`);
+                    }
+                }
+
                 // Create a map to count recommendations for each expert
                 const stats: { [expertId: string]: any } = {};
                 commentsData.forEach((comment: Comment) => {
@@ -98,17 +109,6 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
                         }
                     }
                     setExpertStats(stats);
-
-                    const params = new URLSearchParams(window.location.search);
-                    const defaultExpertId = params.get("expert");
-                    if (defaultExpertId) {
-                        const expert = expertsData.find((e: Expert) => e.id === defaultExpertId);
-                        if (expert) {
-                            handleOpenExpert(expert);
-                        } else {
-                            console.warn(`Expert with ID ${expertId} not found.`);
-                        }
-                    }
                 });
             })
             .catch(error => {
