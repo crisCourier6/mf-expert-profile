@@ -42,7 +42,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
     const [editedIsRecommended, setEditedIsRecommended] = useState(false);
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [newCommentContent, setNewCommentContent] = useState("");
-    const [isRecommended, setIsRecommended] = useState<null|boolean>(null);
+    const [isRecommended, setIsRecommended] = useState<null|boolean>(false);
     const [expandedComments, setExpandedComments] = useState(true);
     const commentsRef = useRef<HTMLDivElement>(null);
     const commentsURL = "/comments-expert"
@@ -94,7 +94,9 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                 .then(res => {
                     onUpdateComment(updatedComment)
                     setNewCommentContent("");  // Clear the input fields after creating
-                    setIsRecommended(null);
+                    setEditedContent("")
+                    setIsRecommended(false);
+                    setEditedIsRecommended(false)
                 })
                 .catch(error => {
                     console.log(error);
@@ -120,7 +122,11 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
     }
 
     const openCreateDialog = () => setShowCreateDialog(true);
-    const closeCreateDialog = () => setShowCreateDialog(false);
+    const closeCreateDialog = () => {
+        setNewCommentContent("")
+        setIsRecommended(false)
+        setShowCreateDialog(false)
+    }
 
     const handleCreateComment = () => {
         const newComment = {
@@ -140,7 +146,9 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
             //console.log(res);
             onNewComment(res.data);  // Call the parent's new comment function
             setNewCommentContent("");  // Clear the input fields after creating
-            setIsRecommended(null);
+            setEditedContent("")
+            setIsRecommended(false);
+            setEditedIsRecommended(false)
             closeCreateDialog();
         }).catch(error => {
             console.log(error);
@@ -504,7 +512,7 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                     label="Recomendado"
                     />
                     <Box sx={{display:"flex", justifyContent: "flex-end", pt:2, width: "100%"}}>
-                        <Button onClick={handleCreateComment} variant="contained" color="primary" disabled={newCommentContent===" "}>
+                        <Button onClick={handleCreateComment} variant="contained" color="primary" disabled={newCommentContent===""}>
                             Guardar
                         </Button>
                     </Box>
