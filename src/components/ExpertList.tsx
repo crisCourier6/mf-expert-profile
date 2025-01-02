@@ -18,8 +18,8 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     const commentsURL = "/comments-expert"
     const [experts, setExperts] = useState<Expert[]>([])
     const [comments, setComments] = useState<Comment[]>([])
-    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
-    const currentUserId = window.sessionStorage.getItem("id") || window.localStorage.getItem("id")
+    const token = window.sessionStorage.getItem("token") ?? window.localStorage.getItem("token")
+    const currentUserId = window.sessionStorage.getItem("id") ?? window.localStorage.getItem("id")
     const [expertsFiltered, setExpertsFiltered] = useState<Expert[]>([])
     const [searchQuery, setSearchQuery] = useState("");
     const [allDone, setAllDone] = useState(false)
@@ -59,9 +59,6 @@ const ExpertList: React.FC<{ isAppBarVisible: boolean, onReady:()=>void }> = ({ 
     
         Promise.all([fetchExperts, fetchComments])
             .then(([expertsResponse, commentsResponse]) => {
-                //console.log("Experts:", expertsResponse.data);
-                //console.log("Comments:", commentsResponse.data);
-
                 const expertsData = expertsResponse.data;
                 const commentsData = commentsResponse.data;
                 setExperts(expertsData);

@@ -15,8 +15,8 @@ const FoodAdviceList: React.FC = () => {
     const [openList, setOpenList] = useState(false)
     const {id} = useParams()
     const [foodAdvices, setFoodAdvices] = useState<FoodAdvice[]>([]);
-    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
-    const currentExpertId = window.sessionStorage.getItem("e_id") || window.localStorage.getItem("e_id")
+    const token = window.sessionStorage.getItem("token") ?? window.localStorage.getItem("token")
+    const currentExpertId = window.sessionStorage.getItem("e_id") ?? window.localStorage.getItem("e_id")
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showEditDialog, setShowEditDialog] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -203,11 +203,9 @@ const FoodAdviceList: React.FC = () => {
                                     }}> 
                                         <Paper sx={{
                                             width:"100%", 
-                                            bgcolor: foodAdvice.type==="warning"
-                                                ?"warning.main"
-                                                :foodAdvice.type==="positive"
-                                                    ?"secondary.main"
-                                                    :"warning.main",
+                                            bgcolor: foodAdvice.type==="positive"
+                                                ?"positive.main"
+                                                :"warning.main",
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "space-between",
@@ -215,18 +213,15 @@ const FoodAdviceList: React.FC = () => {
                                         }}>
                                             <Typography 
                                             variant="subtitle1" 
-                                            color={foodAdvice.type==="warning"
-                                                ?"warning.contrastText"
-                                                :foodAdvice.type==="positive"
-                                                    ?"secondary.contrastText"
-                                                    :"warning.contrastText"}
                                             sx={{
                                                 flexGrow: 1, 
                                                 textAlign: "left", 
                                                 width: "80%", 
                                                 pl:1, 
                                                 fontSize:18, 
-                                                color: "inherit",       // Optional, ensures link color matches the typography style
+                                                color: foodAdvice.type==="positive"
+                                                            ?"positive.contrastText"
+                                                            :"warning.contrastText",       // Optional, ensures link color matches the typography style
                                                 "&:hover": {
                                                     textDecoration: "underline", // Adds underline on hover
                                                 }
@@ -247,11 +242,9 @@ const FoodAdviceList: React.FC = () => {
                                         </Box>
                                         <Paper sx={{
                                             width:"100%", 
-                                            bgcolor: foodAdvice.type==="warning"
-                                                        ?"warning.main"
-                                                        :foodAdvice.type==="positive"
-                                                            ?"secondary.main"
-                                                            :"warning.main", 
+                                            bgcolor: foodAdvice.type==="positive"
+                                                        ?"positive.main"
+                                                        :"warning.main",
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "start",
@@ -259,32 +252,28 @@ const FoodAdviceList: React.FC = () => {
                                         }}>
                                             <Box sx={{ display: "flex", flexDirection: "row-reverse", width:"100%", gap: 0.5 }}> {/* Wrap icons in a box for layout */}
                                                 {foodAdvice.expertId === currentExpertId && 
-                                                    <>
+                                            
                                                         <IconButton size="small" onClick={() => openEditDialog(foodAdvice)}>
                                                             <EditRoundedIcon sx={{ 
-                                                                color: foodAdvice.type==="warning"
-                                                                            ?"warning.contrastText"
-                                                                            :foodAdvice.type==="positive"
-                                                                                ?"secondary.contrastText"
-                                                                                :"warning.contrastText",
+                                                                color: foodAdvice.type==="positive"
+                                                                ?"positive.contrastText"
+                                                                :"warning.contrastText",
                                                                 fontSize: 18
                                                             }}/>
                                                         </IconButton>
-                                                    </>
+                                                 
                                                 }                   
                                                 {foodAdvice.expertId === currentExpertId && 
-                                                    <>
+                                              
                                                         <IconButton size="small" onClick={() => openDeleteDialog(foodAdvice)}>
                                                             <DeleteForeverRoundedIcon sx={{ 
-                                                                color: foodAdvice.type==="warning"
-                                                                            ?"warning.contrastText"
-                                                                            :foodAdvice.type==="positive"
-                                                                                ?"secondary.contrastText"
-                                                                                :"warning.contrastText", 
+                                                                color: foodAdvice.type==="positive"
+                                                                            ?"positive.contrastText"
+                                                                            :"warning.contrastText", 
                                                                 fontSize:18
                                                             }} />
                                                         </IconButton>
-                                                    </>
+                                               
                                                 }   
                                             </Box>
                                         </Paper>

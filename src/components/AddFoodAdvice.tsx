@@ -10,9 +10,9 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const AddFoodAdvice: React.FC= () => {
     const {id} = useParams()
-    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
+    const token = window.sessionStorage.getItem("token") ?? window.localStorage.getItem("token")
     const foodAdviceURL = "/food-advice"
-    const currentExpertId = window.sessionStorage.getItem("e_id") || window.localStorage.getItem("e_id")
+    const currentExpertId = window.sessionStorage.getItem("e_id") ?? window.localStorage.getItem("e_id")
     const [showCreateForm, setShowCreateForm] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [snackbarMsg, setSnackbarMsg] = useState("")

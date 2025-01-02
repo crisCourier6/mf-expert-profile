@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Typography, IconButton, Box, Avatar, 
-    DialogActions, Button, Divider, Paper, TextField, FormControlLabel, Switch, 
-    RadioGroup,
-    Radio,
-    Checkbox} from '@mui/material';
+    DialogActions, Button, Divider, Paper, TextField, FormControlLabel, Checkbox} from '@mui/material';
 import api from '../api';
 import { Expert } from '../interfaces/Expert';
 import { Comment } from '../interfaces/Comment';
@@ -33,8 +30,8 @@ interface ExpertProfileProps {
 const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, onClose, onUpdateComment, onDeleteComment, onNewComment, scrollToComments }) => {
     const [professions, setProfessions] = useState("")
     const [localComments, setLocalComments] = useState<Comment[]>([]);
-    const token = window.sessionStorage.getItem("token") || window.localStorage.getItem("token")
-    const currentUserId = window.sessionStorage.getItem("id") || window.localStorage.getItem("id")
+    const token = window.sessionStorage.getItem("token") ?? window.localStorage.getItem("token")
+    const currentUserId = window.sessionStorage.getItem("id") ?? window.localStorage.getItem("id")
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [showEditDialog, setShowEditDialog] = useState(false)
     const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
@@ -63,11 +60,9 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
 
     useEffect(() => {
         setLocalComments(comments);
-        //console.log(comments)
     }, [comments]);
 
     useEffect(() => {
-        //console.log(open, scrollToComments, commentsRef)
         if (open && scrollToComments) {
             setExpandedComments(true)
             // Scroll to the comments section when the ExpertProfile opens
@@ -143,7 +138,6 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                 Authorization: "Bearer " + token
             }
         }).then(res => {
-            //console.log(res);
             onNewComment(res.data);  // Call the parent's new comment function
             setNewCommentContent("");  // Clear the input fields after creating
             setEditedContent("")
@@ -323,14 +317,14 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                     gap:2,
                 }}>
                 {
-                expandedComments && currentUserId!=expert.userId && <>
+                expandedComments && currentUserId!=expert.userId &&
                     <Button onClick={openCreateDialog} sx={{mt:1}}>
                         <AddIcon/>
                         <Typography variant='subtitle2' sx={{textDecoration: "underline"}}>
                             Agregar comentario
                         </Typography>
                     </Button>
-                    </>
+                    
                 }
                 {expandedComments && 
                     localComments.map(comment => {
@@ -381,24 +375,24 @@ const ExpertProfile: React.FC<ExpertProfileProps> = ({ expert, comments, open, o
                                     <Box sx={{ display: "flex", flexDirection: "row-reverse", width:"100%", gap: 2 }}> {/* Wrap icons in a box for layout */}
                                                         
                                         {comment.userId === currentUserId && 
-                                            <>
+                                            
                                                 <IconButton size="small" onClick={() => openDeleteDialog(comment)}>
                                                     <DeleteForeverRoundedIcon sx={{ 
                                                         color: "error.main", 
                                                         fontSize:18
                                                     }} />
                                                 </IconButton>
-                                            </>
+                                           
                                         }   
                                         {comment.userId === currentUserId && 
-                                            <>
+                                         
                                                 <IconButton size="small" onClick={() => openEditDialog(comment)}>
                                                     <EditRoundedIcon sx={{ 
                                                         color: comment.isRecommended ? "secondary.contrastText" : "primary.contrastText",
                                                         fontSize: 18
                                                     }}/>
                                                 </IconButton>
-                                            </>
+                                          
                                         }   
                                     </Box>
                                 </Paper>
